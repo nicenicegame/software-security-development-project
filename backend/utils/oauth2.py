@@ -19,29 +19,29 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+
 
 def verify_password(plain_password, hashed_password):
-    print(4.1)
     return pwd_context.verify(plain_password, hashed_password)
+
 
 def get_password_hash(password):
     return pwd_context.hash(password)
+
 
 def get_user(db, username: str):
     if username in db:
         user_dict = db[username]
         return UserInDB(**user_dict)
 
+
 def authenticate_user(db, username: str, password: str):
-    print("2")
     user = get_user_by_email(db, email=username)
-    print("3")
     if not user:
         return False
     if not verify_password(password, user.hashed_password):
         return False
-    print("4")
     return user
 
 
@@ -55,7 +55,10 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-async def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
+
+async def get_current_user(
+    db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)
+):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -70,7 +73,11 @@ async def get_current_user(db: Session = Depends(get_db), token: str = Depends(o
     except JWTError:
         raise credentials_exception
 
-    user = db.query(models.User).filter(models.User.username == token_data.username).first()
+    user = (
+        db.query(models.User)
+        .filter(models.User.username == token_data.username)
+        .first()
+    )
     if user is None:
         raise credentials_exception
     return user

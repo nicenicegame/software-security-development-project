@@ -5,3 +5,4 @@ passlib[bcrypt]
 sqlalchemy
 authlib
 itsdangerous
+sqlalchemy_utils
