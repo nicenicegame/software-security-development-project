@@ -24,8 +24,7 @@ function SignUp() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
-    getValues
+    formState: { errors }
   } = useForm<ISignUpFormData>({
     resolver: yupResolver(schema)
   })
@@ -45,21 +44,15 @@ function SignUp() {
         <input
           {...register('email')}
           type="text"
-          className={`my-2 border border-slate-300 bg-white px-3 py-2 focus:outline-none focus:ring-1 rounded-md ${
-            errors.email
-              ? 'border-pink-500 text-pink-600 focus:ring-pink-500 focus:border-pink-500'
-              : 'focus:border-teal-500 focus:ring-teal-500'
-          }`}
+          className={`my-2 px-3 py-2 input-field ${errors.email && 'invalid'}`}
         />
         <p className="text-pink-600 mb-2">{errors.email?.message}</p>
         <label>Password</label>
         <input
           {...register('password')}
           type="password"
-          className={`my-2 border border-slate-300 bg-white px-3 py-2 focus:outline-none focus:ring-1 rounded-md ${
-            errors.password
-              ? 'border-pink-500 text-pink-600 focus:ring-pink-500 focus:border-pink-500'
-              : 'focus:border-teal-500 focus:ring-teal-500'
+          className={`my-2 px-3 py-2 input-field ${
+            errors.password && 'invalid'
           }`}
         />
         <p className="text-pink-600 mb-2">{errors.password?.message}</p>
@@ -67,10 +60,8 @@ function SignUp() {
         <input
           {...register('confirmPassword')}
           type="password"
-          className={`my-2 border border-slate-300 bg-white px-3 py-2 focus:outline-none focus:ring-1 rounded-md ${
-            errors.confirmPassword
-              ? 'border-pink-500 text-pink-600 focus:ring-pink-500 focus:border-pink-500'
-              : 'focus:border-teal-500 focus:ring-teal-500'
+          className={`my-2 px-3 py-2 input-field ${
+            errors.confirmPassword && 'invalid'
           }`}
         />
         <p className="text-pink-600 mb-2">{errors.confirmPassword?.message}</p>

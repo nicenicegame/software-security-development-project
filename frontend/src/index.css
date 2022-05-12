@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    .input-field {
+        @apply border border-slate-300 bg-white focus:outline-none focus:ring-1 rounded-md focus:border-teal-500 focus:ring-teal-500;
+    }
+
+    .input-field.invalid {
+        @apply border-pink-500 text-pink-600 focus:ring-pink-500 focus:border-pink-500;
+    }
+}
