@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 class TodoBase(BaseModel):
     title: str
-    is_done: bool
+    is_done: bool = False
 
 
 class TodoCreate(TodoBase):
@@ -13,8 +13,8 @@ class TodoCreate(TodoBase):
 
 
 class Todo(TodoBase):
-    id: int
-    owner_id: int
+    id: UUID
+    owner_id: UUID
 
     class Config:
         orm_mode = True

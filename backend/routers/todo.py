@@ -11,3 +11,5 @@ router = APIRouter()
 def read_todos(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     todos = crud.get_todos(db, skip=skip, limit=limit)
     return todos
+
+

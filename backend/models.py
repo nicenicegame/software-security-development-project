@@ -3,12 +3,6 @@ from sqlalchemy.orm import relationship
 from .database import Base
 from fastapi_utils.guid_type import GUID, GUID_DEFAULT_SQLITE
 
-import uuid
-
-
-def generate_uuid():
-    return str(uuid.uuid4())
-
 
 class User(Base):
     __tablename__ = "users"
@@ -23,8 +17,8 @@ class User(Base):
 class Todo(Base):
     __tablename__ = "todos"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(GUID, primary_key=True, index=True, default=GUID_DEFAULT_SQLITE)
     title = Column(String, index=True)
-    id_done = Column(Boolean)
-    owner_id = Column(Integer, ForeignKey("users.id"))
+    is_done = Column(Boolean)
+    owner_id = Column(GUID, ForeignKey("users.id"))
     owner = relationship("User", back_populates="todos")
