@@ -2,6 +2,8 @@ import { useForm, SubmitHandler } from 'react-hook-form'
 import { ISignUpFormData } from '../types'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
+import { useAppDispatch } from '../app/hooks'
+import { signUpUser } from '../features/auth/authSlice'
 
 const schema = yup
   .object({
@@ -29,8 +31,17 @@ function SignUp() {
     resolver: yupResolver(schema)
   })
 
-  const onSubmitSignUpForm: SubmitHandler<ISignUpFormData> = (data) => {
+  const dispatch = useAppDispatch()
+
+  const onSubmitSignUpForm: SubmitHandler<ISignUpFormData> = async (data) => {
     console.log(data)
+    await dispatch(
+      signUpUser({
+        username: data.email,
+        email: data.email,
+        password: data.password
+      })
+    )
   }
 
   return (

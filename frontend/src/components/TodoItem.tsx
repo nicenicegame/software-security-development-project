@@ -18,13 +18,13 @@ function TodoItem({
   const [isEditMode, setIsEditMode] = useState<boolean>(false)
   const [newTodoTitle, setNewTodoTitle] = useState<string>(todo.title)
 
-  const editTodo = () => {
+  const toggleEditMode = () => {
     setIsEditMode(!isEditMode)
   }
 
   const submitEditTodo = () => {
     if (newTodoTitle === todo.title) {
-      editTodo()
+      toggleEditMode()
       return
     }
     onEditTodo(todo.id, newTodoTitle)
@@ -39,17 +39,17 @@ function TodoItem({
   }
 
   return (
-    <div className="flex rounded-md overflow-hidden bg-slate-100">
+    <div className="flex">
       {!isEditMode ? (
         <>
-          <span className="px-3 py-2 flex items-center justify-center">
+          <span className="px-3 py-2 flex items-center justify-center bg-slate-100 rounded-l-md">
             <input
               type="checkbox"
               checked={todo.completed}
               onChange={updateCompleted}
             />
           </span>
-          <p className="flex-grow px-3 py-2 border border-transparent shadow-sm truncate">
+          <p className="flex-grow px-3 py-2 bg-slate-100 border border-transparent shadow-sm truncate">
             {todo.title}
           </p>
         </>
@@ -59,7 +59,7 @@ function TodoItem({
             value={newTodoTitle}
             onChange={(e) => setNewTodoTitle(e.target.value)}
             type="text"
-            className="flex-grow px-3 py-2 border border-slate-300 shadow-sm rounded-l-md focus:outline-none bg-white"
+            className="flex-grow px-3 py-2 input-field rounded-none rounded-l-md"
           />
         </>
       )}
@@ -69,7 +69,10 @@ function TodoItem({
       >
         {isEditMode ? <FaCheck /> : <FaEdit />}
       </button>
-      <button className="py-2 px-3 bg-red-500 text-white" onClick={deleteTodo}>
+      <button
+        className="py-2 px-3 bg-red-500 text-white rounded-r-md"
+        onClick={deleteTodo}
+      >
         <FaTrashAlt />
       </button>
     </div>

@@ -14,3 +14,16 @@ export interface ISignUpFormData {
   password: string
   confirmPassword: string
 }
+
+export interface IUser {
+  email: string
+  username: string
+  token: string
+  role: 'admin' | 'user'
+}
+
+export interface ISignUpPayload {
+  username: string
+  email: string
+  password: string
+}
