@@ -18,11 +18,11 @@ function TodoItem({
   const [isEditMode, setIsEditMode] = useState<boolean>(false)
   const [newTodoTitle, setNewTodoTitle] = useState<string>(todo.title)
 
-  function editTodo() {
+  const editTodo = () => {
     setIsEditMode(!isEditMode)
   }
 
-  function submitEditTodo() {
+  const submitEditTodo = () => {
     if (newTodoTitle === todo.title) {
       editTodo()
       return
@@ -30,11 +30,11 @@ function TodoItem({
     onEditTodo(todo.id, newTodoTitle)
   }
 
-  function deleteTodo() {
+  const deleteTodo = () => {
     onDeleteTodo(todo.id)
   }
 
-  function updateCompleted() {
+  const updateCompleted = () => {
     onUpdateCompleted(todo.id, !todo.completed)
   }
 
@@ -49,7 +49,7 @@ function TodoItem({
               onChange={updateCompleted}
             />
           </span>
-          <p className="flex-grow px-3 py-2 border border-transparent shadow-sm">
+          <p className="flex-grow px-3 py-2 border border-transparent shadow-sm truncate">
             {todo.title}
           </p>
         </>

@@ -3,3 +3,14 @@ export interface ITodoItem {
   title: string
   completed: boolean
 }
+
+export interface ISignInFormData {
+  email: string
+  password: string
+}
+
+export interface ISignUpFormData {
+  email: string
+  password: string
+  confirmPassword: string
+}

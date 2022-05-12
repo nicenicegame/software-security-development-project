@@ -5,7 +5,7 @@ function Navbar() {
     <header className="bg-teal-400 font-semibold">
       <nav className="max-w-3xl px-4 mx-auto flex items-center justify-between h-16">
         <Link to={'/'} className="text-2xl">
-          Logo
+          Brand
         </Link>
         <ul className="flex gap-x-4">
           <li>

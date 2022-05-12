@@ -23,15 +23,15 @@ function TodoList() {
     }
   ])
 
-  function onAddNewTodo(e: React.FormEvent<HTMLFormElement>) {
+  const onAddNewTodo = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
   }
 
-  function onEditTodo(id: number, title: string) {}
+  const onEditTodo = (id: number, title: string) => {}
 
-  function onDeleteTodo(id: number) {}
+  const onDeleteTodo = (id: number) => {}
 
-  function onUpdateCompleted(id: number, completed: boolean) {}
+  const onUpdateCompleted = (id: number, completed: boolean) => {}
 
   return (
     <div className="flex flex-col flex-grow">
