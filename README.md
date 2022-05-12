@@ -1,6 +1,6 @@
 # software-security-development-project
 
-This project is belong to 01219325 Software Development Security built with React and FastAPI(python.
+This project is belong to 01219325 Software Development Security built with React and FastAPI(python).
 
 ## Installation 
 You must to install [NodeJS](https://nodejs.org/en/) and [Python](https://www.python.org/) first.
