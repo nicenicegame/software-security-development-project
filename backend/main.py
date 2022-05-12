@@ -1,8 +1,12 @@
 from fastapi import FastAPI
 
+from . import crud, models, schemas
+from .database import engine
+from .routers import todo, user
+
+models.Base.metadata.create_all(bind=engine)
+
 app = FastAPI()
 
-@app.get("/")
-def read_root():
-    return {"message": "Hello Security"}
-
+app.include_router(user.router, prefix="/api")
+app.include_router(todo.router, prefix="/api")
