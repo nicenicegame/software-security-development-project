@@ -37,7 +37,7 @@ export interface ISignInPayload {
 }
 
 export interface ISignUpResponse extends IMessageResponse {
-  detail: {
+  details: {
     id: string
     email: string
     name: string
@@ -45,7 +45,7 @@ export interface ISignUpResponse extends IMessageResponse {
 }
 
 export interface ISignInResponse {
-  detail: {
+  details: {
     name: string
     email: string
     role: Role

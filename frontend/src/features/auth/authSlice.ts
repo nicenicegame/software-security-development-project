@@ -40,11 +40,16 @@ export const signUpUser = createAsyncThunk<
 >('auth/signUpUser', async (userData, thunkAPI) => {
   try {
     return await authService.signUpUser(userData)
-  } catch (error) {
+  } catch (error: any) {
     if (axios.isAxiosError(error)) {
       return thunkAPI.rejectWithValue(error.message)
     }
-    throw error
+    return (
+      error.message ||
+      error.response.message ||
+      error.toString() ||
+      'Error occurred'
+    )
   }
 })
 
@@ -57,11 +62,16 @@ export const signIn = createAsyncThunk<
 >('auth/signIn', async (userData, thunkAPI) => {
   try {
     return await authService.signIn(userData)
-  } catch (error) {
+  } catch (error: any) {
     if (axios.isAxiosError(error)) {
       return thunkAPI.rejectWithValue(error.message)
     }
-    return error || 'Error occurred'
+    return (
+      error.message ||
+      error.response.message ||
+      error.toString() ||
+      'Error occurred'
+    )
   }
 })
 
@@ -72,11 +82,16 @@ export const signInWithGoogle = createAsyncThunk<
 >('auth/signInWithGoogle', async (token, thunkAPI) => {
   try {
     return await authService.signInWithGoogle(token)
-  } catch (error) {
+  } catch (error: any) {
     if (axios.isAxiosError(error)) {
       return thunkAPI.rejectWithValue(error.message)
     }
-    return error || 'Error occurred'
+    return (
+      error.message ||
+      error.response.message ||
+      error.toString() ||
+      'Error occurred'
+    )
   }
 })
 

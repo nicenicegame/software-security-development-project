@@ -1,12 +1,12 @@
 import client from '../../client'
-import { ISignInFormData, ISignUpPayload } from '../../types'
+import { ISignInPayload, ISignUpPayload } from '../../types'
 
 const signUpUser = async (userData: ISignUpPayload) => {
   const response = await client.post('/signup', userData)
   return response.data
 }
 
-const signIn = async (userData: ISignInFormData) => {
+const signIn = async (userData: ISignInPayload) => {
   const response = await client.post('/login', userData)
   return response.data
 }
