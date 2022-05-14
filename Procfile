@@ -1,1 +1,1 @@
-web: uvicorn backend.main:app --host "127.0.0.1" --port=${PORT:-8000}
+gunicorn -w 2 -k uvicorn.workers.UvicornWorker -t 90 backend.main:app
