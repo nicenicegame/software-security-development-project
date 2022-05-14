@@ -67,10 +67,10 @@ function SignIn() {
       <GoogleLogin
         onSuccess={async (credentialResponse) => {
           console.log(credentialResponse)
-          // const response = await client.post('/login', {
-          //   token: credentialResponse.credential
-          // })
-          // console.log(response)
+          const response = await client.post('/login', {
+            token: credentialResponse.credential
+          })
+          console.log(response)
         }}
         onError={() => {
           console.log('Error')
