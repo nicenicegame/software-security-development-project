@@ -42,7 +42,9 @@ def create_user_signup(
             detail="The user with this email already exists in the system",
         )
     hashed_password = pwd_context.hash(user_in.password)
-    user = crud.create_user(db=db, user=user_in, hashed_password=hashed_password)
+    user = crud.create_user(
+        db=db, user=user_in, hashed_password=hashed_password, role="user"
+    )
     return {"message": "successfully create an account", "detail": user}
 
 
@@ -65,27 +67,32 @@ def login(
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": user.name}, expires_delta=access_token_expires
-    )
-    return {
-        "access_token": access_token,
-        "token_type": "bearer",
-    }
+    data = {"name": user.name, "role": user.role, "email": user.email}
+    access_token = create_access_token(data=data, expires_delta=access_token_expires)
+    return {"access_token": access_token, "token_type": "bearer", "detail": data}
 
 
 @router.post("/login/google")
-def google_login(request: schemas.UserGoogle):
+def google_login(request: schemas.UserGoogle, db: Session = Depends(get_db)):
     try:
         user_info = id_token.verify_oauth2_token(request.token, requests.Request())
+        user_db = crud.get_user_by_email(db=db, email=user_info["email"])
+        if not user_db:
+            print("create a new user who logged in via google account")
+            user_create = schemas.UserCreate(
+                name=user_info["name"], password="", email=user_info["email"]
+            )
+            user = crud.create_user(
+                db=db, user=user_create, hashed_password="", role="user"
+            )
+        else:
+            user = user_db
+        data = {"name": user.name, "role": user.role, "email": user.email}
         access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = create_access_token(
-            data={"sub": user_info["name"]}, expires_delta=access_token_expires
+            data=data, expires_delta=access_token_expires
         )
-        return {
-            "access_token": access_token,
-            "token_type": "bearer",
-        }
+        return {"access_token": access_token, "token_type": "bearer", "details": data}
 
     except ValueError:
         return "unauthorized"
