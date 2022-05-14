@@ -6,4 +6,6 @@ sqlalchemy
 authlib
 itsdangerous
 sqlalchemy_utils
-dotenv
+fastapi_utils
+google-auth
+python-dotenv
