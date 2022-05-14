@@ -2,9 +2,8 @@ import { useForm, SubmitHandler } from 'react-hook-form'
 import { ISignInFormData } from '../types'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
-import client from '../client'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
-import { reset, signIn } from '../features/auth/authSlice'
+import { reset, signIn, signInWithGoogle } from '../features/auth/authSlice'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -68,10 +67,9 @@ function SignIn() {
       <GoogleLogin
         onSuccess={async (credentialResponse) => {
           console.log(credentialResponse)
-          const response = await client.post('/login/google', {
-            token: credentialResponse.credential
-          })
-          console.log(response)
+          if (credentialResponse.credential) {
+            dispatch(signInWithGoogle(credentialResponse.credential))
+          }
         }}
         onError={() => {
           console.log('Error')
