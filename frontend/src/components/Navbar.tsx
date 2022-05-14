@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
-import { signOut } from '../features/auth/authSlice'
+import { Role, signOut } from '../features/auth/authSlice'
 import { FaClipboardList } from 'react-icons/fa'
 
 function Navbar() {
@@ -15,11 +15,18 @@ function Navbar() {
         </Link>
         <ul className="flex gap-x-4">
           {user ? (
-            <li>
-              <Link to={'/sign-in'} onClick={() => dispatch(signOut())}>
-                Sign out
-              </Link>
-            </li>
+            <>
+              {user.role === Role.ADMIN && (
+                <li>
+                  <Link to={'/admin/users'}>Admin</Link>
+                </li>
+              )}
+              <li>
+                <Link to={'/sign-in'} onClick={() => dispatch(signOut())}>
+                  Sign out
+                </Link>
+              </li>
+            </>
           ) : (
             <>
               <li>

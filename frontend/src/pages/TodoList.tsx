@@ -32,13 +32,6 @@ function TodoList() {
   const { displayedTodos, selectedFilter, isLoading } = useAppSelector(
     (state) => state.todos
   )
-  const navigate = useNavigate()
-
-  useEffect(() => {
-    if (!user) {
-      navigate('/sign-in')
-    }
-  }, [user, navigate])
 
   useEffect(() => {
     dispatch(updateTodosByFilter())
@@ -93,7 +86,7 @@ function TodoList() {
           />
         ))}
       </div>
-      <form className="my-4 flex" onSubmit={onAddNewTodo}>
+      <form className="my-4 flex p-1" onSubmit={onAddNewTodo}>
         <input
           type="text"
           className="flex-grow px-3 py-2 input-field rounded-none rounded-l-md"

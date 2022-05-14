@@ -17,7 +17,7 @@ const signIn = async (userData: ISignInFormData) => {
       email: 'nicenicegame@gmail.com',
       username: 'nicenicegame',
       token: 'test token',
-      role: Role.ADMIN
+      role: Role.USER
     }
   }
 

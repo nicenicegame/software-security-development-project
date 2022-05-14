@@ -35,9 +35,15 @@ export interface ISignInPayload {
   password: string
 }
 
-export interface ISignUpResponse {}
+export interface ISignUpResponse extends IMessageResponse {
+  detail: {
+    id: string
+    email: string
+    username: string
+  }
+}
 
-export interface ISignInResponse {}
+export interface ISignInResponse extends IMessageResponse {}
 
 export interface IGetTodosResponse {}
 
