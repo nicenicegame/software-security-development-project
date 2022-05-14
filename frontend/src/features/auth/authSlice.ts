@@ -146,7 +146,7 @@ export const authSlice = createSlice({
 
           const {
             access_token: token,
-            detail: { email, name, role }
+            details: { email, name, role }
           } = action.payload
           state.user = { token, email, role, name }
 
@@ -174,7 +174,7 @@ export const authSlice = createSlice({
 
           const {
             access_token: token,
-            detail: { email, role, name }
+            details: { email, role, name }
           } = action.payload
           state.user = { token, email, role, name }
 

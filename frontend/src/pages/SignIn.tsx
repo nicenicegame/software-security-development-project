@@ -44,6 +44,7 @@ function SignIn() {
     }
 
     if (isSuccess) {
+      toast.success(message)
       dispatch(reset())
     }
 
