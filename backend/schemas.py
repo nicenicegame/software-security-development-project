@@ -21,20 +21,31 @@ class Todo(TodoBase):
 
 
 class UserBase(BaseModel):
-    username: str
+    # name: str
     email: str
 
 
 class UserCreate(UserBase):
+    name: str
     password: str
+
+
+class UserGoogle(BaseModel):
+    token: str
 
 
 class User(UserBase):
     id: UUID
+    name: str
     todos: List[Todo] = []
 
     class Config:
         orm_mode = True
+
+
+class UserShow(BaseModel):
+    message: str
+    detail: User
 
 
 class UserInDB(User):

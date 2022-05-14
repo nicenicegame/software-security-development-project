@@ -6,3 +6,4 @@ sqlalchemy
 authlib
 itsdangerous
 sqlalchemy_utils
+dotenv

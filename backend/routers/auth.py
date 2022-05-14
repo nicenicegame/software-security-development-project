@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from .. import crud, models, schemas
@@ -11,13 +12,18 @@ from ..utils.oauth2 import (
     get_current_user,
     pwd_context,
 )
+from google.oauth2 import id_token
+from google.auth.transport import requests
+from dotenv import load_dotenv
+import os
 
 router = APIRouter()
+load_dotenv()
 
 
 @router.post(
     "/signup",
-    # response_model=schemas.User,
+    response_model=schemas.UserShow,
     status_code=201,
 )
 def create_user_signup(
@@ -37,20 +43,21 @@ def create_user_signup(
         )
     hashed_password = pwd_context.hash(user_in.password)
     user = crud.create_user(db=db, user=user_in, hashed_password=hashed_password)
-    return user
+    return {"message": "successfully create an account", "detail": user}
 
 
 @router.post("/login")
 def login(
-    db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()
+    db: Session = Depends(get_db),
+    request: OAuth2PasswordRequestForm = Depends(),
 ):
     """
-    Get the JWT for a user with data from OAuth2 request form body.
+    Create the JWT for a user with data from OAuth2 request form body.
     """
-
     user = authenticate_user(
-        username=form_data.username, password=form_data.password, db=db
+        username=request.username, password=request.password, db=db
     )
+
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -59,12 +66,29 @@ def login(
         )
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
+        data={"sub": user.name}, expires_delta=access_token_expires
     )
     return {
         "access_token": access_token,
         "token_type": "bearer",
     }
+
+
+@router.post("/login/google")
+def google_login(request: schemas.UserGoogle):
+    try:
+        user_info = id_token.verify_oauth2_token(request.token, requests.Request())
+        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        access_token = create_access_token(
+            data={"sub": user_info["name"]}, expires_delta=access_token_expires
+        )
+        return {
+            "access_token": access_token,
+            "token_type": "bearer",
+        }
+
+    except ValueError:
+        return "unauthorized"
 
 
 @router.get("/me", response_model=schemas.User)

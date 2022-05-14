@@ -8,7 +8,7 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(GUID, primary_key=True, default=GUID_DEFAULT_SQLITE)
-    username = Column(String, unique=True, index=True, nullable=False)
+    name = Column(String, unique=True, index=True, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
     todos = relationship("Todo", back_populates="owner")
