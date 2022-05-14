@@ -50,6 +50,7 @@ function SignIn() {
 
     if (isError) {
       toast.error(message)
+      dispatch(reset())
     }
   }, [user, message, isSuccess, isError, dispatch, navigate])
 
@@ -67,7 +68,7 @@ function SignIn() {
       <GoogleLogin
         onSuccess={async (credentialResponse) => {
           console.log(credentialResponse)
-          const response = await client.post('/login', {
+          const response = await client.post('/login/google', {
             token: credentialResponse.credential
           })
           console.log(response)

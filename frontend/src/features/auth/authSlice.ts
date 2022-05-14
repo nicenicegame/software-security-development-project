@@ -4,6 +4,7 @@ import client from '../../client'
 import {
   INetworkState,
   ISignInPayload,
+  ISignInResponse,
   ISignUpPayload,
   ISignUpResponse,
   IUser
@@ -48,25 +49,24 @@ export const signUpUser = createAsyncThunk<
 })
 
 export const signIn = createAsyncThunk<
-  // ISignInResponse,
-  IUser,
+  ISignInResponse,
   ISignInPayload,
   {
     rejectValue: string
   }
 >('auth/signIn', async (userData, thunkAPI) => {
   try {
-    return (await authService.signIn(userData)) as IUser
+    return await authService.signIn(userData)
   } catch (error) {
     if (axios.isAxiosError(error)) {
       return thunkAPI.rejectWithValue(error.message)
     }
-    throw error
+    return error || 'Error occurred'
   }
 })
 
 export const signInWithGoogle = createAsyncThunk<
-  IUser,
+  ISignInResponse,
   string,
   { rejectValue: string }
 >('auth/signInWithGoogle', async (token, thunkAPI) => {
@@ -76,9 +76,14 @@ export const signInWithGoogle = createAsyncThunk<
     if (axios.isAxiosError(error)) {
       return thunkAPI.rejectWithValue(error.message)
     }
-    throw error
+    return error || 'Error occurred'
   }
 })
+
+const finishAuth = (user: IUser) => {
+  localStorage.setItem('user', JSON.stringify(user))
+  client.defaults.headers.common['Authorization'] = `Bearer ${user.token}`
+}
 
 export const authSlice = createSlice({
   name: 'auth',
@@ -120,13 +125,17 @@ export const authSlice = createSlice({
       })
       .addCase(
         signIn.fulfilled,
-        (state: AuthState, action: PayloadAction<IUser>) => {
+        (state: AuthState, action: PayloadAction<ISignInResponse>) => {
           state.isLoading = false
           state.isSuccess = true
-          state.user = action.payload
-          client.defaults.headers.common[
-            'Authorization'
-          ] = `Bearer ${state.user.token}`
+
+          const {
+            access_token: token,
+            detail: { email, name, role }
+          } = action.payload
+          state.user = { token, email, role, name }
+
+          finishAuth(state.user)
         }
       )
       .addCase(
@@ -139,9 +148,34 @@ export const authSlice = createSlice({
           }
         }
       )
-      .addCase(signInWithGoogle.pending, (state: AuthState) => {})
-      .addCase(signInWithGoogle.fulfilled, (state: AuthState) => {})
-      .addCase(signInWithGoogle.rejected, (state: AuthState) => {})
+      .addCase(signInWithGoogle.pending, (state: AuthState) => {
+        state.isLoading = true
+      })
+      .addCase(
+        signInWithGoogle.fulfilled,
+        (state: AuthState, action: PayloadAction<ISignInResponse>) => {
+          state.isLoading = false
+          state.isSuccess = true
+
+          const {
+            access_token: token,
+            detail: { email, role, name }
+          } = action.payload
+          state.user = { token, email, role, name }
+
+          finishAuth(state.user)
+        }
+      )
+      .addCase(
+        signInWithGoogle.rejected,
+        (state: AuthState, action: PayloadAction<string | undefined>) => {
+          state.isLoading = false
+          state.isError = true
+          if (action.payload !== undefined) {
+            state.message = action.payload
+          }
+        }
+      )
   }
 })
 

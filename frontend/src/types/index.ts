@@ -12,20 +12,21 @@ export interface ISignInFormData {
 }
 
 export interface ISignUpFormData {
+  name: string
   email: string
   password: string
   confirmPassword: string
 }
 
 export interface IUser {
+  name: string
   email: string
-  username: string
   token: string
   role: Role
 }
 
 export interface ISignUpPayload {
-  username: string
+  name: string
   email: string
   password: string
 }
@@ -39,11 +40,19 @@ export interface ISignUpResponse extends IMessageResponse {
   detail: {
     id: string
     email: string
-    username: string
+    name: string
   }
 }
 
-export interface ISignInResponse extends IMessageResponse {}
+export interface ISignInResponse {
+  detail: {
+    name: string
+    email: string
+    role: Role
+  }
+  access_token: string
+  token_type: string
+}
 
 export interface IGetTodosResponse {}
 
@@ -51,9 +60,8 @@ export interface IMessageResponse {
   message: string
 }
 
-export interface INetworkState {
+export interface INetworkState extends IMessageResponse {
   isError: boolean
   isSuccess: boolean
   isLoading: boolean
-  message: string
 }

@@ -11,6 +11,7 @@ import Spinner from '../components/Spinner'
 
 const schema = yup
   .object({
+    name: yup.string().required('Please enter your name.'),
     email: yup
       .string()
       .email('Not a valid email.')
@@ -58,7 +59,7 @@ function SignUp() {
   const onSubmitSignUpForm: SubmitHandler<ISignUpFormData> = async (data) => {
     await dispatch(
       signUpUser({
-        username: data.email,
+        name: data.name,
         email: data.email,
         password: data.password
       })
@@ -76,6 +77,13 @@ function SignUp() {
         className="flex flex-col"
         onSubmit={handleSubmit(onSubmitSignUpForm)}
       >
+        <label>Name</label>
+        <input
+          {...register('name')}
+          type="text"
+          className={`my-2 px-3 py-2 input-field ${errors.name && 'invalid'}`}
+        />
+        <p className="text-pink-600 mb-2">{errors.name?.message}</p>
         <label>Email</label>
         <input
           {...register('email')}

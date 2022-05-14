@@ -56,9 +56,7 @@ function TodoList() {
 
   return (
     <div className="flex flex-col flex-grow overflow-y-hidden">
-      <h1 className="font-medium text-3xl my-4">
-        {user?.username}'s Todo list
-      </h1>
+      <h1 className="font-medium text-3xl my-4">{user?.name}'s' Todo list</h1>
       <div className="grid grid-cols-3 divide-x-2 py-3">
         {filterButtons.map((btn, btnIndex) => (
           <button
