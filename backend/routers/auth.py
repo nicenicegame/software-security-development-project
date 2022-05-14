@@ -50,14 +50,14 @@ def create_user_signup(
 
 @router.post("/login")
 def login(
+    request: schemas.TokenForm,
     db: Session = Depends(get_db),
-    request: OAuth2PasswordRequestForm = Depends(),
 ):
     """
     Create the JWT for a user with data from OAuth2 request form body.
     """
     user = authenticate_user(
-        username=request.username, password=request.password, db=db
+        username=request.email, password=request.password, db=db
     )
 
     if not user:
@@ -69,7 +69,7 @@ def login(
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     data = {"name": user.name, "role": user.role, "email": user.email}
     access_token = create_access_token(data=data, expires_delta=access_token_expires)
-    return {"access_token": access_token, "token_type": "bearer", "detail": data}
+    return {"access_token": access_token, "token_type": "bearer", "details": data}
 
 
 @router.post("/login/google")
