@@ -1477,6 +1477,11 @@
     schema-utils "^3.0.0"
     source-map "^0.7.3"
 
+"@react-oauth/google@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@react-oauth/google/-/google-0.2.1.tgz#a0bdacf5374b5a11d31ee9afd6b5d2f519fa7c1d"
+  integrity sha512-ZG20jrOaBuVt6kIv7acE4JHjIQ8rYwGNsA7MdBvjxmxyU7l8vRR/FV6XvneDWXE+AGc8YxqSI6U+cvJLJ3YQ9w==
+
 "@reduxjs/toolkit@^1.8.1":
   version "1.8.1"
   resolved "https://registry.yarnpkg.com/@reduxjs/toolkit/-/toolkit-1.8.1.tgz#94ee1981b8cf9227cda40163a04704a9544c9a9f"

@@ -8,11 +8,7 @@ import { reset, signIn } from '../features/auth/authSlice'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import {
-  GoogleLogin,
-  GoogleLoginResponse,
-  GoogleLoginResponseOffline
-} from 'react-google-login'
+import { GoogleLogin } from '@react-oauth/google'
 import Spinner from '../components/Spinner'
 
 const schema = yup
@@ -61,15 +57,6 @@ function SignIn() {
     await dispatch(signIn(data))
   }
 
-  const handleGoogleLogin = async (
-    response: GoogleLoginResponse | GoogleLoginResponseOffline
-  ) => {
-    const googleData = response as GoogleLoginResponse
-    await client.post('/google/auth', {
-      token: googleData.tokenId
-    })
-  }
-
   if (isLoading) {
     return <Spinner />
   }
@@ -78,11 +65,15 @@ function SignIn() {
     <div>
       <h1 className="font-medium text-3xl my-4">Sign In</h1>
       <GoogleLogin
-        clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID!}
-        buttonText="Sign in with Google"
-        onSuccess={handleGoogleLogin}
-        onFailure={handleGoogleLogin}
-        cookiePolicy={'single_host_origin'}
+        onSuccess={async (credentialResponse) => {
+          const response = await client.post('/login', {
+            token: credentialResponse.credential
+          })
+          console.log(response)
+        }}
+        onError={() => {
+          console.log('Error')
+        }}
       />
       <div className="my-4 relative flex items-center justify-center after:absolute after:w-full after:h-1 after:bg-slate-200 after:top-1/2 after:left-0 after:-z-10">
         <p className="px-3 bg-white">Or</p>
