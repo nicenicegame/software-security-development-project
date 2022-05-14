@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic.utils import almost_equal_floats
 from sqlalchemy.orm import Session
 from .. import crud, models, schemas
 from ..database import get_db
@@ -20,30 +19,30 @@ router = APIRouter()
     "/signup",
     # response_model=schemas.User,
     status_code=201,
-)  # 1
+)
 def create_user_signup(
     *,
-    db: Session = Depends(get_db),  # 2
-    user_in: schemas.UserCreate,  # 3
+    db: Session = Depends(get_db),
+    user_in: schemas.UserCreate,
 ):
     """
     Create new user without the need to be logged in.
     """
 
-    user = db.query(models.User).filter(models.User.email == user_in.email).first()  # 4
+    user = db.query(models.User).filter(models.User.email == user_in.email).first()
     if user:
-        raise HTTPException(  # 5
+        raise HTTPException(
             status_code=400,
             detail="The user with this email already exists in the system",
         )
     hashed_password = pwd_context.hash(user_in.password)
-    user = crud.create_user(db=db, user=user_in, hashed_password=hashed_password)  # 6
+    user = crud.create_user(db=db, user=user_in, hashed_password=hashed_password)
     return user
 
 
 @router.post("/login")
 def login(
-    db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()  # 1
+    db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()
 ):
     """
     Get the JWT for a user with data from OAuth2 request form body.
@@ -51,7 +50,7 @@ def login(
 
     user = authenticate_user(
         username=form_data.username, password=form_data.password, db=db
-    )  # 2
+    )
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -63,7 +62,7 @@ def login(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
     return {
-        "access_token": access_token,  # 4
+        "access_token": access_token,
         "token_type": "bearer",
     }
 
