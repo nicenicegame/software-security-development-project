@@ -1,9 +1,9 @@
-from uuid import UUID
+from fastapi_utils.guid_type import GUID
 from sqlalchemy.orm import Session
 from . import models, schemas
 
 
-def get_user(db: Session, user_id: str):
+def get_user(db: Session, user_id: GUID):
     return db.query(models.User).filter(models.User.id == user_id).first()
 
 
@@ -50,6 +50,7 @@ def update_user_todo(db: Session, todo_id: str, user_id: str, todo):
         return
     db_todo.update({"title": todo.title, "is_done": todo.is_done})
     db.commit()
+    return "update success"
 
 
 def delete_user_todo(db: Session, todo_id: str, user_id: str):
