@@ -1,5 +1,7 @@
+import { Role } from '../features/auth/authSlice'
+
 export interface ITodoItem {
-  id: number
+  id: string
   title: string
   completed: boolean
 }
@@ -19,11 +21,33 @@ export interface IUser {
   email: string
   username: string
   token: string
-  role: 'admin' | 'user'
+  role: Role
 }
 
 export interface ISignUpPayload {
   username: string
   email: string
   password: string
+}
+
+export interface ISignInPayload {
+  email: string
+  password: string
+}
+
+export interface ISignUpResponse {}
+
+export interface ISignInResponse {}
+
+export interface IGetTodosResponse {}
+
+export interface IMessageResponse {
+  message: string
+}
+
+export interface INetworkState {
+  isError: boolean
+  isSuccess: boolean
+  isLoading: boolean
+  message: string
 }

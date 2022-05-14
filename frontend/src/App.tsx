@@ -3,6 +3,7 @@ import SignIn from './pages/SignIn'
 import SignUp from './pages/SignUp'
 import TodoList from './pages/TodoList'
 import Navbar from './components/Navbar'
+import { ToastContainer } from 'react-toastify'
 
 function App() {
   return (
@@ -14,6 +15,17 @@ function App() {
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />
         </Routes>
+        <ToastContainer
+          position="top-right"
+          autoClose={4000}
+          hideProgressBar
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover={false}
+        />
       </main>
     </div>
   )

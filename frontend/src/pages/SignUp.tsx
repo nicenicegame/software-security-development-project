@@ -2,8 +2,12 @@ import { useForm, SubmitHandler } from 'react-hook-form'
 import { ISignUpFormData } from '../types'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
-import { useAppDispatch } from '../app/hooks'
-import { signUpUser } from '../features/auth/authSlice'
+import { useAppDispatch, useAppSelector } from '../app/hooks'
+import { reset, signUpUser } from '../features/auth/authSlice'
+import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import Spinner from '../components/Spinner'
 
 const schema = yup
   .object({
@@ -30,11 +34,28 @@ function SignUp() {
   } = useForm<ISignUpFormData>({
     resolver: yupResolver(schema)
   })
-
+  const navigate = useNavigate()
   const dispatch = useAppDispatch()
+  const { user, message, isSuccess, isLoading, isError } = useAppSelector(
+    (state) => state.auth
+  )
+
+  useEffect(() => {
+    if (user) {
+      navigate('/')
+    }
+
+    if (isSuccess) {
+      dispatch(reset())
+    }
+
+    if (isError) {
+      toast.error(message)
+      dispatch(reset())
+    }
+  }, [user, message, isSuccess, isError, dispatch, navigate])
 
   const onSubmitSignUpForm: SubmitHandler<ISignUpFormData> = async (data) => {
-    console.log(data)
     await dispatch(
       signUpUser({
         username: data.email,
@@ -42,6 +63,10 @@ function SignUp() {
         password: data.password
       })
     )
+  }
+
+  if (isLoading) {
+    return <Spinner />
   }
 
   return (

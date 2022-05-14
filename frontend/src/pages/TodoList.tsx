@@ -1,43 +1,89 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import TodoItem from '../components/TodoItem'
-import { ITodoItem } from '../types'
 import { FaPlus } from 'react-icons/fa'
+import { useAppDispatch, useAppSelector } from '../app/hooks'
+import { useNavigate } from 'react-router-dom'
+import {
+  setSelectedTodoFilter,
+  TodoFilter,
+  updateTodosByFilter
+} from '../features/todos/todosSlice'
+import Spinner from '../components/Spinner'
+
+const filterButtons = [
+  {
+    label: 'All',
+    value: TodoFilter.ALL
+  },
+  {
+    label: 'Not Done',
+    value: TodoFilter.NOT_DONE
+  },
+  {
+    label: 'Completed',
+    value: TodoFilter.COMPLETED
+  }
+]
 
 function TodoList() {
   const [todoTitle, setTodoTitle] = useState<string>('')
-  const [todos, setTodos] = useState<ITodoItem[]>([
-    {
-      id: 1,
-      title: 'Go shoppping',
-      completed: false
-    },
-    {
-      id: 2,
-      title: 'Wash dishes',
-      completed: true
-    },
-    {
-      id: 3,
-      title: 'Walking',
-      completed: false
+  const dispatch = useAppDispatch()
+  const { user } = useAppSelector((state) => state.auth)
+  const { displayedTodos, selectedFilter, isLoading } = useAppSelector(
+    (state) => state.todos
+  )
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/sign-in')
     }
-  ])
+  }, [user, navigate])
+
+  useEffect(() => {
+    dispatch(updateTodosByFilter())
+  }, [dispatch, selectedFilter])
+
+  const onChangeTodoFilter = (filter: TodoFilter) => {
+    dispatch(setSelectedTodoFilter(filter))
+  }
 
   const onAddNewTodo = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
   }
 
-  const onEditTodo = (id: number, title: string) => {}
+  const onEditTodo = (id: string, title: string) => {}
 
-  const onDeleteTodo = (id: number) => {}
+  const onDeleteTodo = (id: string) => {}
 
-  const onUpdateCompleted = (id: number, completed: boolean) => {}
+  const onUpdateCompleted = (id: string, completed: boolean) => {}
+
+  if (isLoading) {
+    return <Spinner />
+  }
 
   return (
-    <div className="flex flex-col flex-grow">
-      <h1 className="font-medium text-3xl my-4">Todo List</h1>
-      <div className="flex flex-col gap-y-4 flex-grow overflow-y-auto p-1">
-        {todos.map((todo) => (
+    <div className="flex flex-col flex-grow overflow-y-hidden">
+      <h1 className="font-medium text-3xl my-4">
+        {user?.username}'s Todo list
+      </h1>
+      <div className="grid grid-cols-3 divide-x-2 py-3">
+        {filterButtons.map((btn, btnIndex) => (
+          <button
+            key={btnIndex}
+            onClick={() => onChangeTodoFilter(btn.value)}
+            className={`p-1 ${
+              selectedFilter === btn.value
+                ? 'font-bold text-teal-600'
+                : 'font-semibold text-slate-400'
+            }`}
+          >
+            {btn.label}
+          </button>
+        ))}
+      </div>
+      <div className="flex flex-col flex-grow gap-y-4 overflow-y-auto p-1 h-0">
+        {displayedTodos.map((todo) => (
           <TodoItem
             key={todo.id}
             todo={todo}
