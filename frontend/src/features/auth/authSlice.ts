@@ -65,6 +65,21 @@ export const signIn = createAsyncThunk<
   }
 })
 
+export const signInWithGoogle = createAsyncThunk<
+  IUser,
+  string,
+  { rejectValue: string }
+>('auth/signInWithGoogle', async (token, thunkAPI) => {
+  try {
+    return await authService.signInWithGoogle(token)
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return thunkAPI.rejectWithValue(error.message)
+    }
+    throw error
+  }
+})
+
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -124,6 +139,9 @@ export const authSlice = createSlice({
           }
         }
       )
+      .addCase(signInWithGoogle.pending, (state: AuthState) => {})
+      .addCase(signInWithGoogle.fulfilled, (state: AuthState) => {})
+      .addCase(signInWithGoogle.rejected, (state: AuthState) => {})
   }
 })
 

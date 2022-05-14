@@ -66,10 +66,11 @@ function SignIn() {
       <h1 className="font-medium text-3xl my-4">Sign In</h1>
       <GoogleLogin
         onSuccess={async (credentialResponse) => {
-          const response = await client.post('/login', {
-            token: credentialResponse.credential
-          })
-          console.log(response)
+          console.log(credentialResponse)
+          // const response = await client.post('/login', {
+          //   token: credentialResponse.credential
+          // })
+          // console.log(response)
         }}
         onError={() => {
           console.log('Error')

@@ -28,9 +28,15 @@ const signIn = async (userData: ISignInFormData) => {
   return response.data
 }
 
+const signInWithGoogle = async (token: string) => {
+  const response = await client.post('/login/google', { token })
+  return response.data
+}
+
 const authService = {
   signUpUser,
-  signIn
+  signIn,
+  signInWithGoogle
 }
 
 export default authService
