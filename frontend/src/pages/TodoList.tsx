@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import TodoItem from '../components/TodoItem'
 import { FaPlus } from 'react-icons/fa'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
-import { useNavigate } from 'react-router-dom'
 import {
   setSelectedTodoFilter,
   TodoFilter,
