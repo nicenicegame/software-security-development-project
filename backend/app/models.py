@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Boolean, ForeignKey, Integer, String
+from sqlalchemy import Column, Boolean, ForeignKey, String
 from sqlalchemy.orm import relationship
 from .database import Base
 from fastapi_utils.guid_type import GUID, GUID_DEFAULT_SQLITE

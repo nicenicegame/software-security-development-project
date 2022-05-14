@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from backend.utils.oauth2 import get_current_admin
+from ..utils.oauth2 import get_current_admin
 from .. import crud, models, schemas
 from ..database import get_db
 from typing import List
