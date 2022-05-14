@@ -44,6 +44,7 @@ function SignIn() {
     }
 
     if (isSuccess) {
+      toast.success(message)
       dispatch(reset())
     }
 
@@ -54,7 +55,12 @@ function SignIn() {
   }, [user, message, isSuccess, isError, dispatch, navigate])
 
   const onSubmitSignInForm: SubmitHandler<ISignInFormData> = async (data) => {
-    await dispatch(signIn(data))
+    await dispatch(
+      signIn({
+        email: data.email,
+        password: data.password
+      })
+    )
   }
 
   if (isLoading) {
