@@ -80,9 +80,8 @@ export interface IDeleteTodoResponse extends IDetailResponse {}
 
 export interface IUpdateTodoResponse extends IDetailResponse {}
 
-export interface IUserInfomation {
+export interface IUserInfomation extends IGetTodosResponse {
   name: string
-  role: 'user' | 'admin'
   id: string
   email: string
 }

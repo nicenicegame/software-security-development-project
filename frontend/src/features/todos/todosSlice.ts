@@ -150,6 +150,11 @@ export const todosSlice = createSlice({
   name: 'todos',
   initialState,
   reducers: {
+    clearTodos: (state: TodosState) => {
+      state.todos = []
+      state.displayedTodos = []
+      state.userTodos = []
+    },
     reset: (state: TodosState) => {
       state.isError = false
       state.isSuccess = false
@@ -210,12 +215,12 @@ export const todosSlice = createSlice({
         (state: TodosState, action: PayloadAction<IGetTodosResponse>) => {
           state.isLoading = false
           state.isSuccess = true
-
           const mappedTodos = action.payload.todos.map((todo) => ({
             id: todo.id,
             title: todo.title,
             completed: todo.is_done
           }))
+          state.userTodos = mappedTodos
           state.todos = mappedTodos
         }
       )
@@ -289,7 +294,7 @@ export const todosSlice = createSlice({
   }
 })
 
-export const { reset, setSelectedTodoFilter, updateTodosByFilter } =
+export const { clearTodos, reset, setSelectedTodoFilter, updateTodosByFilter } =
   todosSlice.actions
 
 export default todosSlice.reducer

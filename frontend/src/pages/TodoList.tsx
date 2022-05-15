@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import TodoItem from '../components/TodoItem'
-import { FaPlus } from 'react-icons/fa'
+import { FaAngleLeft, FaPlus } from 'react-icons/fa'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import {
+  clearTodos,
   createTodo,
   deleteTodo,
   getTodos,
@@ -14,9 +15,8 @@ import {
   updateTodosByFilter
 } from '../features/todos/todosSlice'
 import Spinner from '../components/Spinner'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { Role } from '../features/auth/authSlice'
-import { isFn } from 'react-toastify/dist/utils'
 import { toast } from 'react-toastify'
 import { ITodoItem } from '../types'
 
@@ -48,6 +48,7 @@ function TodoList() {
     isSuccess,
     message
   } = useAppSelector((state) => state.todos)
+  const { selectedUser } = useAppSelector((state) => state.users)
 
   const adminMode = useMemo(
     () => userId && user?.role === Role.ADMIN,
@@ -63,6 +64,10 @@ function TodoList() {
       }
       dispatch(updateTodosByFilter())
     })()
+
+    return () => {
+      dispatch(clearTodos())
+    }
   }, [dispatch, adminMode, userId])
 
   useEffect(() => {
@@ -84,7 +89,7 @@ function TodoList() {
     e.preventDefault()
 
     if (!todoTitle) return
-
+    await dispatch(getUserTodos(userId!))
     if (adminMode) {
     } else {
       await dispatch(createTodo({ title: todoTitle, is_done: false }))
@@ -98,6 +103,7 @@ function TodoList() {
 
   const onEditTodo = async (id: string, todo: ITodoItem) => {
     if (adminMode) {
+      await dispatch(getUserTodos(userId!))
     } else {
       await dispatch(
         updateTodo({ id, is_done: todo.completed, title: todo.title })
@@ -110,6 +116,7 @@ function TodoList() {
 
   const onDeleteTodo = async (id: string) => {
     if (adminMode) {
+      await dispatch(getUserTodos(userId!))
     } else {
       await dispatch(deleteTodo(id))
       await dispatch(getTodos())
@@ -124,7 +131,14 @@ function TodoList() {
 
   return (
     <div className="flex flex-col flex-grow overflow-y-hidden">
-      <h1 className="font-medium text-3xl my-4">{user?.name}'s Todo list</h1>
+      <h1 className="font-medium text-3xl my-4 flex gap-x-2 items-center">
+        {adminMode && (
+          <Link to={'/admin/users'}>
+            <FaAngleLeft />
+          </Link>
+        )}
+        <span>{adminMode ? selectedUser?.name : user?.name}'s Todo list</span>
+      </h1>
       <div className="grid grid-cols-3 divide-x-2 py-3">
         {filterButtons.map((btn, btnIndex) => (
           <button

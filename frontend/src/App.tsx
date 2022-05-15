@@ -18,7 +18,7 @@ function App() {
           </Route>
           <Route
             path="admin"
-            element={<ProtectedRoute redirectPath="/sign-in" />}>
+            element={<ProtectedRoute requireAdmin redirectPath="/" />}>
             <Route path="users/:userId/todos" element={<TodoList />} />
             <Route path="users" element={<UserDashboard />} />
           </Route>

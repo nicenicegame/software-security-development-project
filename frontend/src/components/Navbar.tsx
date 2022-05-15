@@ -2,10 +2,16 @@ import { Link } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { Role, signOut } from '../features/auth/authSlice'
 import { FaClipboardList } from 'react-icons/fa'
+import { googleLogout } from '@react-oauth/google'
 
 function Navbar() {
   const dispatch = useAppDispatch()
   const { user } = useAppSelector((state) => state.auth)
+
+  const signOutApp = () => {
+    googleLogout()
+    dispatch(signOut())
+  }
 
   return (
     <header className="bg-teal-400 font-semibold">
@@ -22,7 +28,7 @@ function Navbar() {
                 </li>
               )}
               <li>
-                <Link to={'/sign-in'} onClick={() => dispatch(signOut())}>
+                <Link to={'/sign-in'} onClick={signOutApp}>
                   Sign out
                 </Link>
               </li>
