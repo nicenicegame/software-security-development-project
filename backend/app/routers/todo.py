@@ -6,7 +6,7 @@ from .. import crud, models, schemas
 from ..database import get_db
 from typing import List
 
-router = APIRouter()
+router = APIRouter(tags=["admin"])
 
 
 @router.get(

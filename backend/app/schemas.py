@@ -21,7 +21,6 @@ class Todo(TodoBase):
 
 
 class UserBase(BaseModel):
-    # name: str
     email: str
 
 

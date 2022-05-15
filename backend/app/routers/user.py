@@ -1,10 +1,9 @@
 from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi_utils.guid_type import GUID
 from sqlalchemy.orm import Session
 from starlette import status
 
-from ..utils.oauth2 import get_current_admin, get_current_user
+from ..utils.oauth2 import get_current_admin, get_current_user, pwd_context
 from .. import crud, models, schemas
 from ..database import get_db
 
@@ -13,16 +12,23 @@ router = APIRouter()
 
 @router.get(
     "/users/",
-    tags=["users"],
+    tags=["admin"],
 )
-def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def read_users(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_admin),
+):
     users = crud.get_users(db, skip=skip, limit=limit)
-    return users
+    return [
+        schemas.User(id=user.id, name=user.name, email=user.email, todos=user.todos)
+        for user in users
+    ]
 
 
-@router.get("/user/{user_id}")
 @router.get(
-    "/user/todos",
+    "/user/todo",
     tags=["users"],
 )
 def read_user(
@@ -37,9 +43,13 @@ def read_user(
 
 @router.get(
     "/user/{user_id}/todos",
-    tags=["users"],
+    tags=["admin"],
 )
-def read_user_todo(user_id, db: Session = Depends(get_db)):
+def read_user_todo(
+    user_id,
+    db: Session = Depends(get_db),
+    current_admin: models.User = Depends(get_current_admin),
+):
     db_user = crud.get_user(db=db, user_id=user_id)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -47,7 +57,7 @@ def read_user_todo(user_id, db: Session = Depends(get_db)):
     return {"todos": db_todos}
 
 
-@router.post("/user", tags=["users"])
+@router.post("/user", tags=["admin"])
 def create_user(
     new_user: schemas.UserCreate,
     db: Session = Depends(get_db),
@@ -61,27 +71,33 @@ def create_user(
     return {"detail": "created success"}
 
 
-@router.put("/user/{user_id}")
+@router.put("/user/{user_id}", tags=["admin"])
 def update_user(
-    user_id: UUID,
+    user_id: str,
     update_user: schemas.UserCreate,
     db: Session = Depends(get_db),
     current_admin: models.User = Depends(get_current_admin),
 ):
-    db_user = crud.get_user_by_email(db=db, email=update_user.email)
+    db_user = crud.get_user(db=db, user_id=user_id)
     if db_user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-    response = crud.update_user(db=db, user_id=user_id, updated_user=update_user)
+    hashed_password = pwd_context.hash(update_user.password)
+    response = crud.update_user(
+        db=db,
+        user_id=user_id,
+        updated_user=update_user,
+        hashed_password=hashed_password,
+    )
     return {"detail": response}
 
 
-@router.delete("/user/{user_id}")
+@router.delete("/user/{user_id}", tags=["admin"])
 def delete_user(
     user_id: UUID,
     db: Session = Depends(get_db),
     current_admin: models.User = Depends(get_current_admin),
 ):
-    db_user = crud.get_user_by_email(db=db, email=update_user.email)
+    db_user = crud.get_user(db=db, user_id=user_id)
     if db_user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     response = crud.delete_user(db=db, user_id=user_id)

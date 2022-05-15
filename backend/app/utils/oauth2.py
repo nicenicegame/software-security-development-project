@@ -6,8 +6,8 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
+from .. import crud
 
-from ..crud import get_user_by_email
 from ..schemas import TokenData, UserInDB
 from ..database import get_db
 from .. import models
@@ -48,7 +48,7 @@ def get_user(db, username: str):
 
 
 def authenticate_user(db, username: str, password: str):
-    user = get_user_by_email(db, email=username)
+    user = crud.get_user_by_email(db, email=username)
     if not user:
         return False
     if not verify_password(password, user.hashed_password):
@@ -81,7 +81,7 @@ async def get_current_user(
     except JWTError:
         raise CREDENTIALS_EXCEPTION
 
-    user = db.query(models.User).filter(models.User.name == token_data.username).first()
+    user = crud.get_user_by_name(db=db, name=token_data.username)
     if user is None:
         raise CREDENTIALS_EXCEPTION
     return user

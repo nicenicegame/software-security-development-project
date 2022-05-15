@@ -15,7 +15,7 @@ from google.auth.transport import requests
 from dotenv import load_dotenv
 import os
 
-router = APIRouter()
+router = APIRouter(tags=["auth"])
 load_dotenv()
 
 
