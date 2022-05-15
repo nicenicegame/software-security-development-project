@@ -58,7 +58,7 @@ def read_todos(
     return {"todos": todo}
 
 
-@router.post("/user/{user_id}/todo")
+@router.post("/user/{user_id}/todos")
 def create_todo(
     user_id: str,
     todo: schemas.TodoCreate,
@@ -70,7 +70,7 @@ def create_todo(
     return create_todo_for_user(db=db, todo=todo, current_user=db_user)
 
 
-@router.put("/user/{user_id}/todo/{todo_id}")
+@router.put("/user/{user_id}/todos/{todo_id}")
 def update_todo(
     user_id: str,
     todo_id: str,
@@ -84,7 +84,7 @@ def update_todo(
     )
 
 
-@router.delete("/user/{user_id}/todo/{todo_id}")
+@router.delete("/user/{user_id}/todos/{todo_id}")
 def delete_todo(
     user_id: str,
     todo_id: str,

@@ -26,6 +26,7 @@ def read_users(
     return [
         schemas.User(id=user.id, name=user.name, email=user.email, todos=user.todos)
         for user in users
+        if user.role != "admin"
     ]
 
 

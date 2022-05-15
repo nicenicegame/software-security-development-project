@@ -1,3 +1,4 @@
+import re
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from .. import crud, models, schemas
@@ -15,6 +16,7 @@ from google.auth.transport import requests
 from dotenv import load_dotenv
 import os
 from ..utils.logconfig import logger
+from ..utils.password import password_check
 
 router = APIRouter(tags=["auth"])
 
@@ -41,6 +43,8 @@ def create_user_signup(
             status_code=400,
             detail="The user with this email already exists in the system",
         )
+    if not (exception := password_check(user_in.password)):
+        return {"message": "password is too week", "detail": exception}
     hashed_password = pwd_context.hash(user_in.password)
     user = crud.create_user(
         db=db, user=user_in, hashed_password=hashed_password, role="user"
