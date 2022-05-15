@@ -88,21 +88,10 @@ async def get_current_user(
 
 
 async def get_current_admin(
-    token: str,
-    db: Session = Depends(get_db),
+    user: models.User=Depends(get_current_user),
 ):
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        print(payload)
-        username: str = payload.get("name")
-        role: str = payload.get("role")
-        if username is None:
-            raise CREDENTIALS_EXCEPTION
-        token_data = TokenData(username=username)
-    except JWTError:
-        raise CREDENTIALS_EXCEPTION
-
-    user = db.query(models.User).filter(models.User.name == token_data.username).first()
-    if user is None:
-        raise CREDENTIALS_EXCEPTION
+    if user.role != "admin":
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="invalid cretentials")
     return user
+
+
