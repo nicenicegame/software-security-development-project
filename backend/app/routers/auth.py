@@ -14,8 +14,10 @@ from google.oauth2 import id_token
 from google.auth.transport import requests
 from dotenv import load_dotenv
 import os
+from ..utils.logconfig import logger
 
 router = APIRouter(tags=["auth"])
+
 load_dotenv()
 
 
@@ -43,6 +45,7 @@ def create_user_signup(
     user = crud.create_user(
         db=db, user=user_in, hashed_password=hashed_password, role="user"
     )
+    logger.info(f"an account with id {user['id']} created")
     return {"message": "successfully create an account", "detail": user}
 
 
@@ -70,6 +73,7 @@ def login(
         "email": user.email,
     }
     access_token = create_access_token(data=data, expires_delta=access_token_expires)
+    logger.info(f"(a)n {user.role} account with email {user.email} logged in")
     return {"access_token": access_token, "token_type": "bearer", "details": data}
 
 
@@ -99,6 +103,7 @@ def google_login(request: schemas.UserGoogle, db: Session = Depends(get_db)):
         access_token = create_access_token(
             data=data, expires_delta=access_token_expires
         )
+        logger.info(f"(a)n {user.role} account with email {user.email} logged in")
         return {"access_token": access_token, "token_type": "bearer", "details": data}
 
     except ValueError:
@@ -114,6 +119,7 @@ def create_admin(name: str, email: str, password: str, db: Session = Depends(get
         hashed_password=hashed_password,
         role="admin",
     )
+    logger.warning("someone create a new admin account")
 
 
 @router.get("/me", response_model=schemas.User)
