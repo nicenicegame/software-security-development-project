@@ -8,6 +8,8 @@ import {
   updateTodosByFilter
 } from '../features/todos/todosSlice'
 import Spinner from '../components/Spinner'
+import { useParams } from 'react-router-dom'
+import { Role } from '../features/auth/authSlice'
 
 const filterButtons = [
   {
@@ -25,12 +27,21 @@ const filterButtons = [
 ]
 
 function TodoList() {
+  const { userId } = useParams()
   const [todoTitle, setTodoTitle] = useState<string>('')
   const dispatch = useAppDispatch()
   const { user } = useAppSelector((state) => state.auth)
   const { displayedTodos, selectedFilter, isLoading } = useAppSelector(
     (state) => state.todos
   )
+
+  // useEffect(() => {
+  //   if (userId && user?.role === Role.ADMIN) {
+  //     dispatch()
+  //   } else {
+  //     dispatch()
+  //   }
+  // }, [dispatch, user, userId])
 
   useEffect(() => {
     dispatch(updateTodosByFilter())

@@ -1,5 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { INetworkState, ITodoItem } from '../../types'
+import todosService from './todosService'
 
 export enum TodoFilter {
   ALL,
@@ -53,6 +54,36 @@ const initialState: TodosState = {
   isLoading: false,
   message: ''
 }
+
+const getTodos = createAsyncThunk('todos/getTodos', async (_, thunkApi) => {
+  try {
+    return await todosService.getTodos()
+  } catch (error: any) {
+    return thunkApi.rejectWithValue(error)
+  }
+})
+
+const updateTodo = createAsyncThunk(
+  'todos/updateTodo',
+  async (payload, thunkApi) => {
+    try {
+      // return await todosService.updateTodo()
+    } catch (error: any) {
+      return thunkApi.rejectWithValue(error)
+    }
+  }
+)
+
+const deleteTodo = createAsyncThunk(
+  'todos/deleteTodo',
+  async (payload, thunkApi) => {
+    try {
+      // return await todosService.deleteTodo()
+    } catch (error: any) {
+      return thunkApi.rejectWithValue(error)
+    }
+  }
+)
 
 export const todosSlice = createSlice({
   name: 'todos',
