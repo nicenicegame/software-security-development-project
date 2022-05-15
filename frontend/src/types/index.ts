@@ -6,6 +6,13 @@ export interface ITodoItem {
   completed: boolean
 }
 
+export interface ITodoItemResponse {
+  id: string
+  owner_id: string
+  is_done: boolean
+  title: string
+}
+
 export interface ISignInFormData {
   email: string
   password: string
@@ -48,13 +55,41 @@ export interface ISignInResponse {
   details: {
     name: string
     email: string
-    role: Role
+    role: 'user' | 'admin'
   }
   access_token: string
   token_type: string
 }
 
-export interface IGetTodosResponse {}
+export interface IGetUserTodosPayload {}
+
+export interface ICreateTodoPayload {
+  title: string
+  is_done: boolean
+}
+
+export interface IUpdateTodoPayload extends ICreateTodoPayload {
+  id: string
+}
+
+export interface IGetTodosResponse {
+  todos: ITodoItemResponse[]
+}
+
+export interface IDeleteTodoResponse extends IDetailResponse {}
+
+export interface IUpdateTodoResponse extends IDetailResponse {}
+
+export interface IUserInfomation {
+  name: string
+  role: 'user' | 'admin'
+  id: string
+  email: string
+}
+
+export interface IDetailResponse {
+  detail: string
+}
 
 export interface IMessageResponse {
   message: string

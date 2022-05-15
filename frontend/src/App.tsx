@@ -13,13 +13,12 @@ function App() {
       <Navbar />
       <main className="w-full max-w-3xl mx-auto px-4 flex flex-col flex-grow">
         <Routes>
-          <Route element={<ProtectedRoute redirectPath="sign-in" />}>
+          <Route element={<ProtectedRoute redirectPath="/sign-in" />}>
             <Route index element={<TodoList />} />
           </Route>
           <Route
             path="admin"
-            element={<ProtectedRoute requireAdmin redirectPath="sign-in" />}
-          >
+            element={<ProtectedRoute redirectPath="/sign-in" />}>
             <Route path="users/:userId/todos" element={<TodoList />} />
             <Route path="users" element={<UserDashboard />} />
           </Route>

@@ -4,17 +4,11 @@ import { useState } from 'react'
 
 type TodoItemProps = {
   todo: ITodoItem
-  onEditTodo: (id: string, newTitle: string) => void
+  onEditTodo: (id: string, todo: ITodoItem) => void
   onDeleteTodo: (id: string) => void
-  onUpdateCompleted: (id: string, completed: boolean) => void
 }
 
-function TodoItem({
-  todo,
-  onEditTodo,
-  onDeleteTodo,
-  onUpdateCompleted
-}: TodoItemProps) {
+function TodoItem({ todo, onEditTodo, onDeleteTodo }: TodoItemProps) {
   const [isEditMode, setIsEditMode] = useState<boolean>(false)
   const [newTodoTitle, setNewTodoTitle] = useState<string>(todo.title)
 
@@ -27,7 +21,7 @@ function TodoItem({
       toggleEditMode()
       return
     }
-    onEditTodo(todo.id, newTodoTitle)
+    onEditTodo(todo.id, { ...todo, title: newTodoTitle })
   }
 
   const deleteTodo = () => {
@@ -35,15 +29,14 @@ function TodoItem({
   }
 
   const updateCompleted = () => {
-    onUpdateCompleted(todo.id, !todo.completed)
+    onEditTodo(todo.id, { ...todo, completed: !todo.completed })
   }
 
   return (
     <div
       className={`flex shadow-md rounded-md ${
         todo.completed && 'opacity-60 line-through'
-      }`}
-    >
+      }`}>
       {!isEditMode ? (
         <>
           <span className="p-3 flex items-center justify-center bg-slate-100 rounded-l-md">
@@ -72,8 +65,7 @@ function TodoItem({
       </button>
       <button
         className="p-3 bg-red-500 text-white rounded-r-md"
-        onClick={deleteTodo}
-      >
+        onClick={deleteTodo}>
         <FaTrashAlt />
       </button>
     </div>

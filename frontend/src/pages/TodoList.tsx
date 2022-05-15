@@ -1,15 +1,24 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import TodoItem from '../components/TodoItem'
 import { FaPlus } from 'react-icons/fa'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import {
+  createTodo,
+  deleteTodo,
+  getTodos,
+  getUserTodos,
+  reset,
   setSelectedTodoFilter,
   TodoFilter,
+  updateTodo,
   updateTodosByFilter
 } from '../features/todos/todosSlice'
 import Spinner from '../components/Spinner'
 import { useParams } from 'react-router-dom'
 import { Role } from '../features/auth/authSlice'
+import { isFn } from 'react-toastify/dist/utils'
+import { toast } from 'react-toastify'
+import { ITodoItem } from '../types'
 
 const filterButtons = [
   {
@@ -31,35 +40,83 @@ function TodoList() {
   const [todoTitle, setTodoTitle] = useState<string>('')
   const dispatch = useAppDispatch()
   const { user } = useAppSelector((state) => state.auth)
-  const { displayedTodos, selectedFilter, isLoading } = useAppSelector(
-    (state) => state.todos
+  const {
+    displayedTodos,
+    selectedFilter,
+    isLoading,
+    isError,
+    isSuccess,
+    message
+  } = useAppSelector((state) => state.todos)
+
+  const adminMode = useMemo(
+    () => userId && user?.role === Role.ADMIN,
+    [userId, user]
   )
 
-  // useEffect(() => {
-  //   if (userId && user?.role === Role.ADMIN) {
-  //     dispatch()
-  //   } else {
-  //     dispatch()
-  //   }
-  // }, [dispatch, user, userId])
+  useEffect(() => {
+    ;(async () => {
+      if (adminMode) {
+        await dispatch(getUserTodos(userId!))
+      } else {
+        await dispatch(getTodos())
+      }
+      dispatch(updateTodosByFilter())
+    })()
+  }, [dispatch, adminMode, userId])
 
   useEffect(() => {
     dispatch(updateTodosByFilter())
   }, [dispatch, selectedFilter])
 
+  useEffect(() => {
+    if (isError) {
+      toast.error(message)
+      dispatch(reset())
+    }
+  }, [dispatch, isError, isSuccess, message])
+
   const onChangeTodoFilter = (filter: TodoFilter) => {
     dispatch(setSelectedTodoFilter(filter))
   }
 
-  const onAddNewTodo = (e: React.FormEvent<HTMLFormElement>) => {
+  const onAddNewTodo = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
+    if (!todoTitle) return
+
+    if (adminMode) {
+    } else {
+      await dispatch(createTodo({ title: todoTitle, is_done: false }))
+      await dispatch(getTodos())
+    }
+
+    dispatch(updateTodosByFilter())
+
+    setTodoTitle('')
   }
 
-  const onEditTodo = (id: string, title: string) => {}
+  const onEditTodo = async (id: string, todo: ITodoItem) => {
+    if (adminMode) {
+    } else {
+      await dispatch(
+        updateTodo({ id, is_done: todo.completed, title: todo.title })
+      )
+      await dispatch(getTodos())
+    }
 
-  const onDeleteTodo = (id: string) => {}
+    dispatch(updateTodosByFilter())
+  }
 
-  const onUpdateCompleted = (id: string, completed: boolean) => {}
+  const onDeleteTodo = async (id: string) => {
+    if (adminMode) {
+    } else {
+      await dispatch(deleteTodo(id))
+      await dispatch(getTodos())
+    }
+
+    dispatch(updateTodosByFilter())
+  }
 
   if (isLoading) {
     return <Spinner />
@@ -67,7 +124,7 @@ function TodoList() {
 
   return (
     <div className="flex flex-col flex-grow overflow-y-hidden">
-      <h1 className="font-medium text-3xl my-4">{user?.name}'s' Todo list</h1>
+      <h1 className="font-medium text-3xl my-4">{user?.name}'s Todo list</h1>
       <div className="grid grid-cols-3 divide-x-2 py-3">
         {filterButtons.map((btn, btnIndex) => (
           <button
@@ -77,8 +134,7 @@ function TodoList() {
               selectedFilter === btn.value
                 ? 'font-bold text-teal-600'
                 : 'font-semibold text-slate-400'
-            }`}
-          >
+            }`}>
             {btn.label}
           </button>
         ))}
@@ -90,7 +146,6 @@ function TodoList() {
             todo={todo}
             onEditTodo={onEditTodo}
             onDeleteTodo={onDeleteTodo}
-            onUpdateCompleted={onUpdateCompleted}
           />
         ))}
       </div>
@@ -104,8 +159,7 @@ function TodoList() {
         />
         <button
           type="submit"
-          className="px-3 py-2 bg-teal-500 text-white rounded-r-md"
-        >
+          className="px-3 py-2 bg-teal-500 text-white rounded-r-md">
           <FaPlus />
         </button>
       </form>

@@ -10,7 +10,7 @@ type ProtectedRouteProps = {
 function ProtectedRoute({ redirectPath, requireAdmin }: ProtectedRouteProps) {
   const { user } = useAppSelector((state) => state.auth)
 
-  if (!user || (requireAdmin && user.role === Role.ADMIN)) {
+  if (!user || requireAdmin || user.role === Role.ADMIN) {
     return <Navigate to={redirectPath} replace />
   }
 

@@ -47,6 +47,8 @@ function SignUp() {
     }
 
     if (isSuccess) {
+      navigate('/sign-in')
+      toast.success(message)
       dispatch(reset())
     }
 
@@ -75,8 +77,7 @@ function SignUp() {
       <h1 className="font-medium text-3xl my-4">Sign Up</h1>
       <form
         className="flex flex-col"
-        onSubmit={handleSubmit(onSubmitSignUpForm)}
-      >
+        onSubmit={handleSubmit(onSubmitSignUpForm)}>
         <label>Name</label>
         <input
           {...register('name')}
@@ -111,8 +112,7 @@ function SignUp() {
         <p className="text-pink-600 mb-2">{errors.confirmPassword?.message}</p>
         <button
           type="submit"
-          className="self-start my-2 py-2 px-3 bg-teal-500 text-white rounded-md"
-        >
+          className="self-start my-2 py-2 px-3 bg-teal-500 text-white rounded-md">
           Submit
         </button>
       </form>

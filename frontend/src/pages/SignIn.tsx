@@ -86,8 +86,7 @@ function SignIn() {
       </div>
       <form
         className="flex flex-col"
-        onSubmit={handleSubmit(onSubmitSignInForm)}
-      >
+        onSubmit={handleSubmit(onSubmitSignInForm)}>
         <label>Email</label>
         <input
           {...register('email')}
@@ -106,8 +105,7 @@ function SignIn() {
         <p className="text-pink-600 mb-2">{errors.password?.message}</p>
         <button
           type="submit"
-          className="self-start my-2 py-2 px-3 bg-teal-500 text-white rounded-md"
-        >
+          className="self-start my-2 py-2 px-3 bg-teal-500 text-white rounded-md">
           Submit
         </button>
       </form>

@@ -19,6 +19,11 @@ export enum Role {
   USER
 }
 
+const roles = {
+  admin: Role.ADMIN,
+  user: Role.USER
+}
+
 interface AuthState extends INetworkState {
   user: IUser | null
 }
@@ -34,9 +39,7 @@ const initialState: AuthState = {
 export const signUpUser = createAsyncThunk<
   ISignUpResponse,
   ISignUpPayload,
-  {
-    rejectValue: string
-  }
+  { rejectValue: string }
 >('auth/signUpUser', async (userData, thunkAPI) => {
   try {
     return await authService.signUpUser(userData)
@@ -56,9 +59,7 @@ export const signUpUser = createAsyncThunk<
 export const signIn = createAsyncThunk<
   ISignInResponse,
   ISignInPayload,
-  {
-    rejectValue: string
-  }
+  { rejectValue: string }
 >('auth/signIn', async (userData, thunkAPI) => {
   try {
     return await authService.signIn(userData)
@@ -121,10 +122,14 @@ export const authSlice = createSlice({
       .addCase(signUpUser.pending, (state: AuthState) => {
         state.isLoading = true
       })
-      .addCase(signUpUser.fulfilled, (state: AuthState) => {
-        state.isLoading = false
-        state.isSuccess = true
-      })
+      .addCase(
+        signUpUser.fulfilled,
+        (state: AuthState, action: PayloadAction<ISignUpResponse>) => {
+          state.isLoading = false
+          state.isSuccess = true
+          state.message = action.payload.message
+        }
+      )
       .addCase(
         signUpUser.rejected,
         (state: AuthState, action: PayloadAction<string | undefined>) => {
@@ -143,11 +148,13 @@ export const authSlice = createSlice({
         (state: AuthState, action: PayloadAction<ISignInResponse>) => {
           state.isLoading = false
           state.isSuccess = true
+          state.message = 'Signed in successfully!'
 
           const {
             access_token: token,
-            details: { email, name, role }
+            details: { email, role: roleString, name }
           } = action.payload
+          const role = roles[roleString]
           state.user = { token, email, role, name }
 
           finishAuth(state.user)
@@ -171,11 +178,13 @@ export const authSlice = createSlice({
         (state: AuthState, action: PayloadAction<ISignInResponse>) => {
           state.isLoading = false
           state.isSuccess = true
+          state.message = 'Signed in successfully!'
 
           const {
             access_token: token,
-            details: { email, role, name }
+            details: { email, role: roleString, name }
           } = action.payload
+          const role = roles[roleString]
           state.user = { token, email, role, name }
 
           finishAuth(state.user)
