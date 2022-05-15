@@ -25,13 +25,25 @@ def create_user(db: Session, user: schemas.UserCreate, hashed_password: str, rol
     db.refresh(db_user)
     return db_user
 
-def update_user(db: Session, user_id:UUID , updated_user: schemas.UserCreate,):
+
+def update_user(
+    db: Session,
+    user_id: UUID,
+    updated_user: schemas.UserCreate,
+):
     db_user = db.query(models.User).filter(models.User.id == user_id)
     if not db_user.first():
         return
-    db_user.update({"name": update_user.name, "email": update_user.email, "password": update_user.password})
+    db_user.update(
+        {
+            "name": update_user.name,
+            "email": update_user.email,
+            "password": update_user.password,
+        }
+    )
     db.commit()
     return "update completed"
+
 
 def delete_user(db: Session, user_id: UUID):
     db_user = db.query(models.User).filter(models.User.id == user_id)
@@ -63,7 +75,7 @@ def update_user_todo(db: Session, todo_id: str, user_id: str, todo):
         models.Todo.id == todo_id, models.Todo.owner_id == user_id
     )
     if not db_todo.first():
-        return 
+        return
     db_todo.update({"title": todo.title, "is_done": todo.is_done})
     db.commit()
     return "update success"

@@ -88,10 +88,10 @@ async def get_current_user(
 
 
 async def get_current_admin(
-    user: models.User=Depends(get_current_user),
+    user: models.User = Depends(get_current_user),
 ):
     if user.role != "admin":
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="invalid cretentials")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="invalid cretentials"
+        )
     return user
-
-

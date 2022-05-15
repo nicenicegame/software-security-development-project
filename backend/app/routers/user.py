@@ -19,10 +19,8 @@ def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     users = crud.get_users(db, skip=skip, limit=limit)
     return users
 
-@router.get(
-    "/user/{user_id}"
-)
 
+@router.get("/user/{user_id}")
 @router.get(
     "/user/todos",
     tags=["users"],
@@ -36,42 +34,39 @@ def read_user(
     db_todos = crud.get_user_todos(db, user_id=current_user.id, skip=0, limit=0)
     return {"todos": db_todos}
 
+
 @router.get(
     "/user/{user_id}/todos",
     tags=["users"],
 )
-def read_user_todo(
-    user_id,
-    db: Session = Depends(get_db)
-):
+def read_user_todo(user_id, db: Session = Depends(get_db)):
     db_user = crud.get_user(db=db, user_id=user_id)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     db_todos = crud.get_user_todos(db=db, user_id=user_id)
     return {"todos": db_todos}
 
-@router.post(
-    "/user",
-    tags=["users"]
-)
+
+@router.post("/user", tags=["users"])
 def create_user(
     new_user: schemas.UserCreate,
     db: Session = Depends(get_db),
-    current_admin: models.User = Depends(get_current_admin)
+    current_admin: models.User = Depends(get_current_admin),
 ):
     db_user = crud.get_user_by_email(db=db, email=new_user.email)
     if db_user:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User already exist")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="User already exist"
+        )
     return {"detail": "created success"}
 
-@router.put(
-    "/user/{user_id}"
-)
+
+@router.put("/user/{user_id}")
 def update_user(
     user_id: UUID,
     update_user: schemas.UserCreate,
     db: Session = Depends(get_db),
-    current_admin: models.User = Depends(get_current_admin)
+    current_admin: models.User = Depends(get_current_admin),
 ):
     db_user = crud.get_user_by_email(db=db, email=update_user.email)
     if db_user is None:
@@ -79,19 +74,19 @@ def update_user(
     response = crud.update_user(db=db, user_id=user_id, updated_user=update_user)
     return {"detail": response}
 
-@router.delete(
-    "/user/{user_id}"
-)
+
+@router.delete("/user/{user_id}")
 def delete_user(
     user_id: UUID,
     db: Session = Depends(get_db),
-    current_admin: models.User = Depends(get_current_admin)
+    current_admin: models.User = Depends(get_current_admin),
 ):
     db_user = crud.get_user_by_email(db=db, email=update_user.email)
     if db_user is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND) 
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     response = crud.delete_user(db=db, user_id=user_id)
     return {"detail": response}
+
 
 @router.post("/user/todos", response_model=schemas.Todo, tags=["users"])
 def create_item_for_user(
