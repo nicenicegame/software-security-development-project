@@ -28,7 +28,7 @@ def read_users(
 
 
 @router.get(
-    "/user/todo",
+    "/user/todos",
     tags=["users"],
 )
 def read_user(

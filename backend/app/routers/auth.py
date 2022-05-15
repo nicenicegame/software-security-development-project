@@ -87,6 +87,7 @@ def google_login(request: schemas.UserGoogle, db: Session = Depends(get_db)):
                 db=db, user=user_create, hashed_password="", role="user"
             )
         else:
+            crud.delete_user(db=db, user_id=user_db.id)
             user = user_db
         data = {
             "id": str(user.id),
@@ -102,6 +103,17 @@ def google_login(request: schemas.UserGoogle, db: Session = Depends(get_db)):
 
     except ValueError:
         return "unauthorized"
+
+
+@router.post("/admin")
+def create_admin(name: str, email: str, password: str, db: Session = Depends(get_db)):
+    hashed_password = pwd_context.hash(password)
+    crud.create_user(
+        db=db,
+        user=schemas.UserCreate(name=name, email=email, password=password),
+        hashed_password=hashed_password,
+        role="admin",
+    )
 
 
 @router.get("/me", response_model=schemas.User)
