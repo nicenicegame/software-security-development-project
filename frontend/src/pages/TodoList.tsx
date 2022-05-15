@@ -5,14 +5,17 @@ import { useAppDispatch, useAppSelector } from '../app/hooks'
 import {
   clearTodos,
   createTodo,
+  createUserTodo,
   deleteTodo,
+  deleteUserTodo,
   getTodos,
   getUserTodos,
   reset,
   setSelectedTodoFilter,
   TodoFilter,
   updateTodo,
-  updateTodosByFilter
+  updateTodosByFilter,
+  updateUserTodo
 } from '../features/todos/todosSlice'
 import Spinner from '../components/Spinner'
 import { Link, useParams } from 'react-router-dom'
@@ -89,8 +92,12 @@ function TodoList() {
     e.preventDefault()
 
     if (!todoTitle) return
-    await dispatch(getUserTodos(userId!))
+
     if (adminMode) {
+      await dispatch(
+        createUserTodo({ userId: userId!, is_done: false, title: todoTitle })
+      )
+      await dispatch(getUserTodos(userId!))
     } else {
       await dispatch(createTodo({ title: todoTitle, is_done: false }))
       await dispatch(getTodos())
@@ -103,6 +110,14 @@ function TodoList() {
 
   const onEditTodo = async (id: string, todo: ITodoItem) => {
     if (adminMode) {
+      await dispatch(
+        updateUserTodo({
+          userId: userId!,
+          id,
+          is_done: todo.completed,
+          title: todo.title
+        })
+      )
       await dispatch(getUserTodos(userId!))
     } else {
       await dispatch(
@@ -116,6 +131,7 @@ function TodoList() {
 
   const onDeleteTodo = async (id: string) => {
     if (adminMode) {
+      await dispatch(deleteUserTodo({ id, userId: userId! }))
       await dispatch(getUserTodos(userId!))
     } else {
       await dispatch(deleteTodo(id))

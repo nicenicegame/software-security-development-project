@@ -72,6 +72,19 @@ export interface IUpdateTodoPayload extends ICreateTodoPayload {
   id: string
 }
 
+export interface ICreateUserTodoPayload extends ICreateTodoPayload {
+  userId: string
+}
+
+export interface IUpdateUserTodoPayload extends IUpdateTodoPayload {
+  userId: string
+}
+
+export interface IDeleteUserTodoPayload {
+  userId: string
+  id: string
+}
+
 export interface IGetTodosResponse {
   todos: ITodoItemResponse[]
 }

@@ -2,13 +2,16 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import axios from 'axios'
 import {
   ICreateTodoPayload,
+  ICreateUserTodoPayload,
   IDeleteTodoResponse,
+  IDeleteUserTodoPayload,
   IGetTodosResponse,
   INetworkState,
   ITodoItem,
   ITodoItemResponse,
   IUpdateTodoPayload,
-  IUpdateTodoResponse
+  IUpdateTodoResponse,
+  IUpdateUserTodoPayload
 } from '../../types'
 import todosService from './todosService'
 
@@ -102,6 +105,28 @@ export const createTodo = createAsyncThunk<
   }
 })
 
+export const createUserTodo = createAsyncThunk<
+  ITodoItemResponse,
+  ICreateUserTodoPayload,
+  {
+    rejectValue: string
+  }
+>('todos/createUserTodo', async (payload, thunkAPI) => {
+  try {
+    return todosService.createUserTodo(payload)
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return thunkAPI.rejectWithValue(error.message)
+    }
+    return (
+      error.message ||
+      error.response.message ||
+      error.toString() ||
+      'Error occurred'
+    )
+  }
+})
+
 export const updateTodo = createAsyncThunk<
   IUpdateTodoResponse,
   IUpdateTodoPayload,
@@ -124,6 +149,28 @@ export const updateTodo = createAsyncThunk<
   }
 })
 
+export const updateUserTodo = createAsyncThunk<
+  IUpdateTodoResponse,
+  IUpdateUserTodoPayload,
+  {
+    rejectValue: string
+  }
+>('todos/updateUserTodo', async (payload, thunkAPI) => {
+  try {
+    return await todosService.updateUserTodo(payload)
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return thunkAPI.rejectWithValue(error.message)
+    }
+    return (
+      error.message ||
+      error.response.message ||
+      error.toString() ||
+      'Error occurred'
+    )
+  }
+})
+
 export const deleteTodo = createAsyncThunk<
   IDeleteTodoResponse,
   string,
@@ -133,6 +180,28 @@ export const deleteTodo = createAsyncThunk<
 >('todos/deleteTodo', async (payload, thunkAPI) => {
   try {
     return await todosService.deleteTodo(payload)
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return thunkAPI.rejectWithValue(error.message)
+    }
+    return (
+      error.message ||
+      error.response.message ||
+      error.toString() ||
+      'Error occurred'
+    )
+  }
+})
+
+export const deleteUserTodo = createAsyncThunk<
+  IDeleteTodoResponse,
+  IDeleteUserTodoPayload,
+  {
+    rejectValue: string
+  }
+>('todos/deleteUserTodo', async (payload, thunkAPI) => {
+  try {
+    return await todosService.deleteUserTodo(payload)
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
       return thunkAPI.rejectWithValue(error.message)
@@ -247,6 +316,27 @@ export const todosSlice = createSlice({
         (state: TodosState, action: PayloadAction<string | undefined>) => {
           state.isLoading = false
           state.isError = true
+          if (action.payload !== undefined) {
+            state.message = action.payload
+          }
+        }
+      )
+      .addCase(createUserTodo.pending, (state: TodosState) => {
+        state.isLoading = true
+      })
+      .addCase(createUserTodo.fulfilled, (state: TodosState) => {
+        state.isLoading = false
+        state.isSuccess = true
+        state.message = 'Create new todo successfully'
+      })
+      .addCase(
+        createUserTodo.rejected,
+        (state: TodosState, action: PayloadAction<string | undefined>) => {
+          state.isLoading = false
+          state.isError = true
+          if (action.payload !== undefined) {
+            state.message = action.payload
+          }
         }
       )
       .addCase(updateTodo.pending, (state: TodosState) => {
@@ -270,6 +360,27 @@ export const todosSlice = createSlice({
           }
         }
       )
+      .addCase(updateUserTodo.pending, (state: TodosState) => {
+        state.isLoading = true
+      })
+      .addCase(
+        updateUserTodo.fulfilled,
+        (state: TodosState, action: PayloadAction<IUpdateTodoResponse>) => {
+          state.isLoading = false
+          state.isSuccess = true
+          state.message = action.payload.detail
+        }
+      )
+      .addCase(
+        updateUserTodo.rejected,
+        (state: TodosState, action: PayloadAction<string | undefined>) => {
+          state.isLoading = false
+          state.isError = true
+          if (action.payload !== undefined) {
+            state.message = action.payload
+          }
+        }
+      )
       .addCase(deleteTodo.pending, (state: TodosState) => {
         state.isLoading = true
       })
@@ -283,6 +394,27 @@ export const todosSlice = createSlice({
       )
       .addCase(
         deleteTodo.rejected,
+        (state: TodosState, action: PayloadAction<string | undefined>) => {
+          state.isLoading = false
+          state.isError = true
+          if (action.payload !== undefined) {
+            state.message = action.payload
+          }
+        }
+      )
+      .addCase(deleteUserTodo.pending, (state: TodosState) => {
+        state.isLoading = true
+      })
+      .addCase(
+        deleteUserTodo.fulfilled,
+        (state: TodosState, action: PayloadAction<IDeleteTodoResponse>) => {
+          state.isLoading = false
+          state.isSuccess = true
+          state.message = action.payload.detail
+        }
+      )
+      .addCase(
+        deleteUserTodo.rejected,
         (state: TodosState, action: PayloadAction<string | undefined>) => {
           state.isLoading = false
           state.isError = true
