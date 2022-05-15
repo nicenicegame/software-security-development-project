@@ -2,15 +2,16 @@ from fastapi import FastAPI
 
 from app import models
 from app.database import engine
-from app.routers import todo, user, auth
+from app.routers import admin_user, admin_todo, user, auth
 from fastapi.middleware.cors import CORSMiddleware
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-app.include_router(user.router, prefix="/api")
-app.include_router(todo.router, prefix="/api")
+app.include_router(admin_user.router, tags=["admin"], prefix="/api")
+app.include_router(admin_todo.router, tags=["admin"], prefix="/api")
+app.include_router(user.router, tags=["user"], prefix="/api")
 app.include_router(auth.router)
 
 origins = [
