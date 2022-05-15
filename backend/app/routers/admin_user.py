@@ -6,6 +6,8 @@ from starlette import status
 from ..utils.oauth2 import get_current_admin, pwd_context
 from .. import crud, models, schemas
 from ..database import get_db
+from ..utils.logconfig import logger
+
 
 router = APIRouter()
 
@@ -38,6 +40,7 @@ def create_user(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="User already exist"
         )
+    logger.info(f"admin create a new user")
     return {"detail": "created success"}
 
 
@@ -58,6 +61,7 @@ def update_user(
         updated_user=update_user,
         hashed_password=hashed_password,
     )
+    logger.info("admin update a user")
     return {"detail": response}
 
 
@@ -71,4 +75,5 @@ def delete_user(
     if db_user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     response = crud.delete_user(db=db, user_id=user_id)
+    logger.info("admin delete a user")
     return {"detail": response}

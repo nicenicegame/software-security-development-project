@@ -6,6 +6,7 @@ from starlette import status
 from ..utils.oauth2 import get_current_admin, get_current_user, pwd_context
 from .. import crud, models, schemas
 from ..database import get_db
+from ..utils.logconfig import logger
 
 router = APIRouter()
 
