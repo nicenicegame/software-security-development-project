@@ -1,4 +1,5 @@
 from fastapi_utils.guid_type import GUID
+from uuid import UUID
 from sqlalchemy.orm import Session
 from . import models, schemas
 
@@ -24,6 +25,21 @@ def create_user(db: Session, user: schemas.UserCreate, hashed_password: str, rol
     db.refresh(db_user)
     return db_user
 
+def update_user(db: Session, user_id:UUID , updated_user: schemas.UserCreate,):
+    db_user = db.query(models.User).filter(models.User.id == user_id)
+    if not db_user.first():
+        return
+    db_user.update({"name": update_user.name, "email": update_user.email, "password": update_user.password})
+    db.commit()
+    return "update completed"
+
+def delete_user(db: Session, user_id: UUID):
+    db_user = db.query(models.User).filter(models.User.id == user_id)
+    if not db_user.first():
+        return
+    db_user.delete()
+    db.commit()
+
 
 def get_todos(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Todo).offset(skip).limit(limit).all()
@@ -34,7 +50,7 @@ def get_user_todos(db: Session, user_id: str, skip: int = 0, limit: int = 100):
     return db.query(models.Todo).filter(models.Todo.owner_id == user_id).all()
 
 
-def create_user_todo(db: Session, todo: schemas.TodoCreate, user_id: str):
+def create_user_todo(db: Session, todo: schemas.TodoCreate, user_id: GUID):
     db_todo = models.Todo(**todo.dict(), owner_id=user_id)
     db.add(db_todo)
     db.commit()
@@ -47,7 +63,7 @@ def update_user_todo(db: Session, todo_id: str, user_id: str, todo):
         models.Todo.id == todo_id, models.Todo.owner_id == user_id
     )
     if not db_todo.first():
-        return
+        return 
     db_todo.update({"title": todo.title, "is_done": todo.is_done})
     db.commit()
     return "update success"
@@ -59,3 +75,4 @@ def delete_user_todo(db: Session, todo_id: str, user_id: str):
     )
     db_todo.delete()
     db.commit()
+    return "remove success"
