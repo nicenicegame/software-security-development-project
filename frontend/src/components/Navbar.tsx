@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { Role, signOut } from '../features/auth/authSlice'
 import { FaClipboardList } from 'react-icons/fa'
 import { googleLogout } from '@react-oauth/google'
+import { setSelectedUserById } from '../features/users/usersSlice'
 
 function Navbar() {
   const dispatch = useAppDispatch()
@@ -11,6 +12,7 @@ function Navbar() {
   const signOutApp = () => {
     googleLogout()
     dispatch(signOut())
+    dispatch(setSelectedUserById(null))
   }
 
   return (

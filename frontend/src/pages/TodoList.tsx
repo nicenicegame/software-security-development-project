@@ -70,6 +70,7 @@ function TodoList() {
 
     return () => {
       dispatch(clearTodos())
+      dispatch(setSelectedTodoFilter(TodoFilter.ALL))
     }
   }, [dispatch, adminMode, userId])
 
@@ -141,59 +142,58 @@ function TodoList() {
     dispatch(updateTodosByFilter())
   }
 
-  if (isLoading) {
-    return <Spinner />
-  }
-
   return (
-    <div className="flex flex-col flex-grow overflow-y-hidden">
-      <h1 className="font-medium text-3xl my-4 flex gap-x-2 items-center">
-        {adminMode && (
-          <Link to={'/admin/users'}>
-            <FaAngleLeft />
-          </Link>
-        )}
-        <span>{adminMode ? selectedUser?.name : user?.name}'s Todo list</span>
-      </h1>
-      <div className="grid grid-cols-3 divide-x-2 py-3">
-        {filterButtons.map((btn, btnIndex) => (
-          <button
-            key={btnIndex}
-            onClick={() => onChangeTodoFilter(btn.value)}
-            className={`p-1 ${
-              selectedFilter === btn.value
-                ? 'font-bold text-teal-600'
-                : 'font-semibold text-slate-400'
-            }`}>
-            {btn.label}
-          </button>
-        ))}
-      </div>
-      <div className="flex flex-col flex-grow gap-y-4 overflow-y-auto p-1 h-0">
-        {displayedTodos.map((todo) => (
-          <TodoItem
-            key={todo.id}
-            todo={todo}
-            onEditTodo={onEditTodo}
-            onDeleteTodo={onDeleteTodo}
+    <>
+      {isLoading && <Spinner />}
+      <div className="flex flex-col flex-grow overflow-y-hidden">
+        <h1 className="font-medium text-3xl my-4 flex gap-x-2 items-center">
+          {adminMode && (
+            <Link to={'/admin/users'}>
+              <FaAngleLeft />
+            </Link>
+          )}
+          <span>{adminMode ? selectedUser?.name : user?.name}'s Todo list</span>
+        </h1>
+        <div className="grid grid-cols-3 divide-x-2 py-3">
+          {filterButtons.map((btn, btnIndex) => (
+            <button
+              key={btnIndex}
+              onClick={() => onChangeTodoFilter(btn.value)}
+              className={`p-1 ${
+                selectedFilter === btn.value
+                  ? 'font-bold text-teal-600'
+                  : 'font-semibold text-slate-400'
+              }`}>
+              {btn.label}
+            </button>
+          ))}
+        </div>
+        <div className="flex flex-col flex-grow gap-y-4 overflow-y-auto p-1 h-0">
+          {displayedTodos.map((todo) => (
+            <TodoItem
+              key={todo.id}
+              todo={todo}
+              onEditTodo={onEditTodo}
+              onDeleteTodo={onDeleteTodo}
+            />
+          ))}
+        </div>
+        <form className="my-4 flex p-1" onSubmit={onAddNewTodo}>
+          <input
+            type="text"
+            className="flex-grow px-3 py-2 input-field rounded-none rounded-l-md"
+            placeholder="Enter todo title..."
+            value={todoTitle}
+            onChange={(e) => setTodoTitle(e.target.value)}
           />
-        ))}
+          <button
+            type="submit"
+            className="px-3 py-2 bg-teal-500 text-white rounded-r-md">
+            <FaPlus />
+          </button>
+        </form>
       </div>
-      <form className="my-4 flex p-1" onSubmit={onAddNewTodo}>
-        <input
-          type="text"
-          className="flex-grow px-3 py-2 input-field rounded-none rounded-l-md"
-          placeholder="Enter todo title..."
-          value={todoTitle}
-          onChange={(e) => setTodoTitle(e.target.value)}
-        />
-        <button
-          type="submit"
-          className="px-3 py-2 bg-teal-500 text-white rounded-r-md">
-          <FaPlus />
-        </button>
-      </form>
-    </div>
+    </>
   )
 }
 

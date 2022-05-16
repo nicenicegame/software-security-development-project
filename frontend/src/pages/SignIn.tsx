@@ -63,53 +63,54 @@ function SignIn() {
     )
   }
 
-  if (isLoading) {
-    return <Spinner />
-  }
-
   return (
-    <div>
-      <h1 className="font-medium text-3xl my-4">Sign In</h1>
-      <GoogleLogin
-        onSuccess={async (credentialResponse) => {
-          console.log(credentialResponse)
-          if (credentialResponse.credential) {
-            dispatch(signInWithGoogle(credentialResponse.credential))
-          }
-        }}
-        onError={() => {
-          console.log('Error')
-        }}
-      />
-      <div className="my-4 relative flex items-center justify-center after:absolute after:w-full after:h-1 after:bg-slate-200 after:top-1/2 after:left-0 after:-z-10">
-        <p className="px-3 bg-white">Or</p>
+    <>
+      {isLoading && <Spinner />}
+      <div>
+        <h1 className="font-medium text-3xl my-4">Sign In</h1>
+        <GoogleLogin
+          onSuccess={async (credentialResponse) => {
+            console.log(credentialResponse)
+            if (credentialResponse.credential) {
+              dispatch(signInWithGoogle(credentialResponse.credential))
+            }
+          }}
+          onError={() => {
+            console.log('Error')
+          }}
+        />
+        <div className="my-4 relative flex items-center justify-center after:absolute after:w-full after:h-1 after:bg-slate-200 after:top-1/2 after:left-0 after:-z-10">
+          <p className="px-3 bg-white">Or</p>
+        </div>
+        <form
+          className="flex flex-col"
+          onSubmit={handleSubmit(onSubmitSignInForm)}>
+          <label>Email</label>
+          <input
+            {...register('email')}
+            type="text"
+            className={`my-2 px-3 py-2 input-field ${
+              errors.email && 'invalid'
+            }`}
+          />
+          <p className="text-pink-600 mb-2">{errors.email?.message}</p>
+          <label>Password</label>
+          <input
+            {...register('password')}
+            type="password"
+            className={`my-2 px-3 py-2 input-field ${
+              errors.password && 'invalid'
+            }`}
+          />
+          <p className="text-pink-600 mb-2">{errors.password?.message}</p>
+          <button
+            type="submit"
+            className="self-start my-2 py-2 px-3 bg-teal-500 text-white rounded-md">
+            Submit
+          </button>
+        </form>
       </div>
-      <form
-        className="flex flex-col"
-        onSubmit={handleSubmit(onSubmitSignInForm)}>
-        <label>Email</label>
-        <input
-          {...register('email')}
-          type="text"
-          className={`my-2 px-3 py-2 input-field ${errors.email && 'invalid'}`}
-        />
-        <p className="text-pink-600 mb-2">{errors.email?.message}</p>
-        <label>Password</label>
-        <input
-          {...register('password')}
-          type="password"
-          className={`my-2 px-3 py-2 input-field ${
-            errors.password && 'invalid'
-          }`}
-        />
-        <p className="text-pink-600 mb-2">{errors.password?.message}</p>
-        <button
-          type="submit"
-          className="self-start my-2 py-2 px-3 bg-teal-500 text-white rounded-md">
-          Submit
-        </button>
-      </form>
-    </div>
+    </>
   )
 }
 

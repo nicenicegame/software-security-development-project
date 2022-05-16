@@ -37,13 +37,13 @@ export const getUsers = createAsyncThunk<
   }
 })
 
-export const editUser = createAsyncThunk<
-  IUserInfomation[],
+export const deleteUser = createAsyncThunk<
   void,
+  string,
   { rejectValue: string }
->('users/editUsers', async (_, thunkAPI) => {
+>('users/deleteUser', async (userId, thunkAPI) => {
   try {
-    return await usersService.getUsers()
+    return await usersService.deleteUser(userId)
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
       return thunkAPI.rejectWithValue(error.message)
@@ -61,7 +61,10 @@ export const usersSlice = createSlice({
   name: 'users',
   initialState,
   reducers: {
-    setSelectedUserById: (state: UsersState, action: PayloadAction<string>) => {
+    setSelectedUserById: (
+      state: UsersState,
+      action: PayloadAction<string | null>
+    ) => {
       state.selectedUser =
         state.users.find((user) => user.id === action.payload) || null
     }
@@ -89,6 +92,17 @@ export const usersSlice = createSlice({
           }
         }
       )
+      .addCase(deleteUser.pending, (state: UsersState) => {
+        state.isLoading = true
+      })
+      .addCase(deleteUser.fulfilled, (state: UsersState) => {
+        state.isLoading = false
+        state.isSuccess = true
+      })
+      .addCase(deleteUser.rejected, (state: UsersState) => {
+        state.isLoading = false
+        state.isError = true
+      })
   }
 })
 
