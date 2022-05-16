@@ -48,7 +48,7 @@ def create_user_signup(
     user = crud.create_user(
         db=db, user=user_in, hashed_password=hashed_password, role="user"
     )
-    logger.info(f"an account with id {user['id']} created")
+    logger.info(f"an account with id {user.id} created")
     return {"message": "successfully create an account", "detail": user}
 
 
