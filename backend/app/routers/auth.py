@@ -14,7 +14,6 @@ from ..utils.oauth2 import (
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from dotenv import load_dotenv
-import os
 from ..utils.logconfig import logger
 from ..utils.password import password_check
 

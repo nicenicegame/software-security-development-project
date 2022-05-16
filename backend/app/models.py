@@ -3,8 +3,6 @@ from sqlalchemy import Column, Boolean, ForeignKey, String
 from sqlalchemy.orm import relationship
 from .database import Base
 from fastapi_utils.guid_type import GUID, GUID_DEFAULT_SQLITE
-from cryptography.fernet import Fernet
-from sqlalchemy_utils import EncryptedType
 
 from dotenv import load_dotenv
 import os
@@ -18,7 +16,7 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(GUID, primary_key=True, default=GUID_DEFAULT_SQLITE)
-    name = Column(String, unique=True, index=True, nullable=False)
+    name = Column(String, index=True, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
     role = Column(String, nullable=False)
