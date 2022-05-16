@@ -1,8 +1,8 @@
 import { useEffect, useMemo } from 'react'
-import { useAppDispatch, useAppSelector } from '../../app/hooks'
+import { useAppDispatch, useAppSelector } from '../../store/hooks'
 import Spinner from '../../components/Spinner'
 import { getUserTodos } from '../../features/todos/todosSlice'
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import {
   deleteUser,
   getUsers,
@@ -20,6 +20,7 @@ function UserDashboard() {
   const { userTodos, isLoading: loadTodos } = useAppSelector(
     (state) => state.todos
   )
+  const { user } = useAppSelector((state) => state.auth)
 
   useEffect(() => {
     ;(async () => {
@@ -51,6 +52,8 @@ function UserDashboard() {
     () => userTodos.filter((todo) => !todo.completed).length,
     [userTodos]
   )
+
+  if (!user) return <Navigate to={'/sign-in'} />
 
   return (
     <>

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import TodoItem from '../components/TodoItem'
 import { FaAngleLeft, FaPlus } from 'react-icons/fa'
-import { useAppDispatch, useAppSelector } from '../app/hooks'
+import { useAppDispatch, useAppSelector } from '../store/hooks'
 import {
   clearTodos,
   createTodo,
@@ -18,7 +18,7 @@ import {
   updateUserTodo
 } from '../features/todos/todosSlice'
 import Spinner from '../components/Spinner'
-import { Link, useParams } from 'react-router-dom'
+import { Link, Navigate, useParams } from 'react-router-dom'
 import { Role } from '../features/auth/authSlice'
 import { toast } from 'react-toastify'
 import { ITodoItem } from '../types'
@@ -141,6 +141,8 @@ function TodoList() {
 
     dispatch(updateTodosByFilter())
   }
+
+  if (!user) return <Navigate to={'/sign-in'} />
 
   return (
     <>

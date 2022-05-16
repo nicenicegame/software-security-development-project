@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from 'react-router-dom'
-import { useAppSelector } from '../app/hooks'
+import { useAppSelector } from '../store/hooks'
 import { Role } from '../features/auth/authSlice'
 
 type ProtectedRouteProps = {

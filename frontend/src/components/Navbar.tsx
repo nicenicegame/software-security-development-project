@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { useAppDispatch, useAppSelector } from '../app/hooks'
+import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { Role, signOut } from '../features/auth/authSlice'
 import { FaClipboardList } from 'react-icons/fa'
 import { googleLogout } from '@react-oauth/google'

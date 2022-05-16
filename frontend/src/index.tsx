@@ -5,9 +5,12 @@ import 'react-toastify/dist/ReactToastify.css'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 import { BrowserRouter } from 'react-router-dom'
-import { store } from './app/store'
+import store from './store'
 import { Provider } from 'react-redux'
 import { GoogleOAuthProvider } from '@react-oauth/google'
+import { injectStore } from './client'
+
+injectStore(store)
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
