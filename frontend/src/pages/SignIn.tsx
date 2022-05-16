@@ -4,7 +4,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { reset, signIn, signInWithGoogle } from '../features/auth/authSlice'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { GoogleLogin } from '@react-oauth/google'
@@ -18,7 +18,7 @@ const schema = yup
       .required('Please enter your email.'),
     password: yup
       .string()
-      .min(6, 'Password must be at least 6 characters.')
+      .min(12, 'Password must be at least 12 characters.')
       .required('Please enter your password.')
   })
   .required()
@@ -37,6 +37,7 @@ function SignIn() {
   const { user, message, isSuccess, isLoading, isError } = useAppSelector(
     (state) => state.auth
   )
+  const [isPasswordShown, setIsPasswordShown] = useState(false)
 
   useEffect(() => {
     if (user) {
@@ -97,11 +98,18 @@ function SignIn() {
           <label>Password</label>
           <input
             {...register('password')}
-            type="password"
+            type={isPasswordShown ? 'text' : 'password'}
             className={`my-2 px-3 py-2 input-field ${
               errors.password && 'invalid'
             }`}
           />
+          <div className="flex items-center gap-x-2">
+            <input
+              type="checkbox"
+              onChange={(e) => setIsPasswordShown(e.target.checked)}
+            />
+            <label>Show password</label>
+          </div>
           <p className="text-pink-600 mb-2">{errors.password?.message}</p>
           <button
             type="submit"

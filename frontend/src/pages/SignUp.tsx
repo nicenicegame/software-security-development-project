@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { reset, signUpUser } from '../features/auth/authSlice'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Spinner from '../components/Spinner'
 import { FaCheckCircle } from 'react-icons/fa'
 
@@ -43,6 +43,8 @@ function SignUp() {
   const { user, message, isSuccess, isLoading, isError } = useAppSelector(
     (state) => state.auth
   )
+  const [isPasswordShown, setIsPasswordShown] = useState(false)
+  const [isConfirmPasswordShown, setIsConfirmPasswordShown] = useState(false)
 
   useEffect(() => {
     if (user) {
@@ -132,12 +134,19 @@ function SignUp() {
             <label>Password</label>
             <input
               {...register('password')}
-              type="password"
+              type={isPasswordShown ? 'text' : 'password'}
               className={`my-2 px-3 py-2 input-field ${
                 (errors.password || passwordState?.passwordOk === true) &&
                 'invalid'
               }`}
             />
+            <div className="flex items-center gap-x-2 text-sm text-slate-500">
+              <input
+                type="checkbox"
+                onChange={(e) => setIsPasswordShown(e.target.checked)}
+              />
+              <label>Show password</label>
+            </div>
             <p className="text-pink-600 mb-2">
               {errors.password?.message}
               {errors.password?.message === undefined &&
@@ -147,11 +156,18 @@ function SignUp() {
             <label>Confirm Password</label>
             <input
               {...register('confirmPassword')}
-              type="password"
+              type={isConfirmPasswordShown ? 'text' : 'password'}
               className={`my-2 px-3 py-2 input-field ${
                 errors.confirmPassword && 'invalid'
               }`}
             />
+            <div className="flex items-center gap-x-2 text-sm text-slate-500">
+              <input
+                type="checkbox"
+                onChange={(e) => setIsConfirmPasswordShown(e.target.checked)}
+              />
+              <label>Show confirm password</label>
+            </div>
             <p className="text-pink-600 mb-2">
               {errors.confirmPassword?.message}
             </p>
